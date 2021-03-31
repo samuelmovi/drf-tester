@@ -2,14 +2,17 @@ import random
 import string
 
 from rest_framework import status
+from rest_framework.test import APIRequestFactory
 
 
 class NoAccess:
 
     def setUp(self):
+        self.requests = APIRequestFactory()
         self.endpoint = None
-        self.factory = None
+        self.model_factory = None
         self.model = None
+        self.view = None
 
     # anon user
     def test_anon_user_cannot_create_instance(self):
@@ -18,7 +21,9 @@ class NoAccess:
         instances = [self.factory() for n in range(random.randint(1,5))]
 
         # Query endpoint
-        response = self.client.post(self.endpoint, data={})
+        request = self.requests.post(self.endpoint, data={})
+        response = self.view(request)
+        # response = self.client.post(self.endpoint, data={})
         # Assert access is forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -30,7 +35,9 @@ class NoAccess:
 
         # Query endpoint
         url = self.endpoint + f'{instance.pk}/'
-        response = self.client.put(url, {}, format='json')
+        request = self.requests.put(url, data={})
+        response = self.view(request)
+        # response = self.client.put(url, {}, format='json')
 
         # Assert forbidden code
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -43,7 +50,9 @@ class NoAccess:
 
         # Query endpoint
         url = self.endpoint + f'{instance.pk}/'
-        response = self.client.delete(url)
+        request = self.requests.delete(url)
+        response = self.view(request)
+        # response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Assert instance still exists on db
@@ -64,7 +73,9 @@ class ReadAccess:
         # create instances
         expected_instances = [ self.factory() for x in random.randint(3, 10) ]
         # Request list
-        response = self.client.get(self.endpoint)
+        request = self.requests.get(self.endpoint)
+        response = self.view(request)
+        # response = self.client.get(self.endpoint)
 
         # Assert access is forbidden
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -87,7 +98,9 @@ class ReadAccess:
             url = f"{self.endpoint}?{filter_name}={random_string}"
 
             # Request list
-            response = self.client.get(url)
+            request = self.requests.get(url)
+            response = self.view(request)
+            # response = self.client.get(url)
 
             # Assert access is granted
             self.assertEqual(response.status_code, status.HTTP_200_OK)
