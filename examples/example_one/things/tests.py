@@ -1,13 +1,7 @@
-import random
-
-from django.test import TestCase
-
-from rest_framework.test import APITestCase
-from rest_framework import status
-
 from drf_tester.viewsets.anon_user import AnonNoAccess
 from drf_tester.viewsets.auth_user import AuthFullAccess
 from drf_tester.viewsets.admin import AdminFullAccess
+from rest_framework.test import APIRequestFactory
 
 from . import models
 from . import factories
@@ -22,6 +16,7 @@ class ThingViewSetTest(AnonNoAccess, AuthFullAccess, AdminFullAccess):
     def setUp(self):
         """Tests setup
         """
+        self.requests = APIRequestFactory()
         self.endpoint = '/api/v1/things/'
         self.factory = factories.ThingFactory
         self.model = models.Thing

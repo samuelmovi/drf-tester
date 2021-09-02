@@ -1,4 +1,4 @@
-from rest_framework.test import force_authenticate
+from rest_framework.test import force_authenticate, APITestCase
 from rest_framework import status
 
 from ..utils import BaseDrfTest
@@ -155,16 +155,13 @@ class CanCreate(BaseDrfTest):
 
 
 class CanUpdate(BaseDrfTest):
-    def test_auth_user_can_modify_own_instance(self):
+    def test_auth_user_can_modify_instance(self):
         """Authenticated user can modify existing instance
         """
         # get user
         user = self.get_active_user()
         # Create instances
         instance = self.factory()
-        # make our user the creator
-        instance.creator = self.user
-        instance.save()
 
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
@@ -180,16 +177,13 @@ class CanUpdate(BaseDrfTest):
 
 
 class CanDestroy(BaseDrfTest):
-    def test_auth_user_can_delete_own_instance(self):
+    def test_auth_user_can_delete_instance(self):
         """Authenticated user can delete existing instance
         """
         # get user
         user = self.get_active_user()
         # Create instances
         instance = self.factory()
-        # make our user the creator
-        instance.creator = self.user
-        instance.save()
 
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
@@ -229,21 +223,21 @@ class CanPaginate(BaseDrfTest):
 
 # EXTENDED CLASSES
 
-class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AuthFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Authenticated user has full access to endopint
     """
     ...
 
 
-class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AuthNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has no access to endopint
     """
     ...
 
 
-class AuthReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AuthReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has only read access to endopint
     """

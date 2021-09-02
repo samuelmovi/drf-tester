@@ -1,6 +1,5 @@
-from rest_framework.test import force_authenticate
+from rest_framework.test import force_authenticate, APITestCase
 from rest_framework import status
-
 from ..utils import BaseDrfTest
 
 
@@ -222,7 +221,7 @@ class CanPaginate(BaseDrfTest):
 
 # Extended classes
 
-class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AdminNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has no access to endopint
     """
@@ -230,7 +229,7 @@ class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
 
 
 
-class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AdminReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has only read access to endopint
     """
@@ -238,7 +237,7 @@ class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
 
 
 
-class AdminFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AdminFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Admin user has full access to endopint
     """

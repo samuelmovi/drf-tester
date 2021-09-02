@@ -2,14 +2,14 @@ import random
 
 from django.contrib.auth import get_user_model
 
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIRequestFactory
 
 
 User = get_user_model()
 
 
 def get_active_user(instance_data):
-    return User.objects.createuser(is_active=True, **instance_data)
+    return User.objects.create(is_active=True, **instance_data)
 
 
 def get_active_admin(instance_data):
@@ -25,10 +25,10 @@ class BaseDrfTest:
     """
 
     def get_admin_user(self) -> User:
-        return get_active_admin(**self.admin_data)
+        return get_active_admin(self.admin_data)
     
     def get_active_user(self) -> User:
-        return get_active_user(**self.user_data)
+        return get_active_user(self.user_data)
     
     def get_model_instances(self) -> list:
         """
@@ -38,8 +38,11 @@ class BaseDrfTest:
         return [self.factory() for i in range(random.randint(1,10))]        
 
     def setUp(self):
+        """
+        Create the required variables
+        
+        """
         self.requests = APIRequestFactory()
-        # overwrite following required variables
         self.endpoint = None
         self.factory = None
         self.model = None

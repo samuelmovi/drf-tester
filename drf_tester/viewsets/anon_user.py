@@ -1,3 +1,4 @@
+from rest_framework.test import APITestCase
 from rest_framework import status
 
 from ..utils import BaseDrfTest
@@ -161,7 +162,7 @@ class CanDestroy(BaseDrfTest):
 
 # Extended classes
 
-class AnonNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AnonNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """
@@ -169,7 +170,7 @@ class AnonNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
 
 
 
-class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AnonReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
@@ -177,7 +178,7 @@ class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
 
 
 
-class AnonFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AnonFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """
