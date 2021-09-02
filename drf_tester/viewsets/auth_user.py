@@ -1,4 +1,4 @@
-from rest_framework.test import force_authenticate, APITestCase
+from rest_framework.test import force_authenticate
 from rest_framework import status
 
 from ..utils import BaseDrfTest
@@ -11,7 +11,7 @@ class NoList(BaseDrfTest):
         """Authenticated user cannot get details on existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instance
         instances = self.get_model_instances()
 
@@ -30,7 +30,7 @@ class NoDetails(BaseDrfTest):
         """Authenticated user cannot get details on existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
 
@@ -49,7 +49,7 @@ class NoCreate(BaseDrfTest):
         """Authenticated user cannot create new instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Query endpoint
         request = self.requests.post(self.endpoint, data={})
         force_authenticate(request, user=user)
@@ -64,7 +64,7 @@ class NoUpdate(BaseDrfTest):
         """Authenticated user cannot modify existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
 
@@ -83,7 +83,7 @@ class NoDestroy(BaseDrfTest):
         """Authenticated user cannot delete existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
@@ -104,7 +104,7 @@ class CanList(BaseDrfTest):
         """Authenticated user can list instances
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instances
         instances = self.get_model_instances()
 
@@ -125,7 +125,7 @@ class CanDetail(BaseDrfTest):
         """Authenticated user can list instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
@@ -159,7 +159,7 @@ class CanUpdate(BaseDrfTest):
         """Authenticated user can modify existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
@@ -181,7 +181,7 @@ class CanDestroy(BaseDrfTest):
         """Authenticated user can delete existing instance
         """
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
@@ -204,7 +204,7 @@ class CanPaginate(BaseDrfTest):
         limit = 5
         offset = 10
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # create instances
         instances = self.get_model_instances()
 
@@ -223,81 +223,23 @@ class CanPaginate(BaseDrfTest):
 
 # EXTENDED CLASSES
 
-class AuthFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Authenticated user has full access to endopint
     """
     ...
 
 
-class AuthNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has no access to endopint
     """
     ...
 
 
-class AuthReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AuthReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has only read access to endopint
     """
     ...
-
-
-
-'''
-class IndividualAccess:
-    """
-    User has wide access to all endopints and the instances created by that user
-    """
-
-    def setUp(self):
-        self.requests = APIRequestFactory()
-        self.endpoint = None
-        self.factory = None
-        self.model = None
-        self.instance_data = {}
-        self.alt_data = {}
-        self.view = None
-        # users
-        self.user_data = {}
-        self.user = utils.get_active_user(**self.user_data)
-        self.other_user_data = {}
-        self.user_field_name = ''   # name of table column for instance creator
-
-    def test_auth_user_cannot_modify_other_users_instance(self):
-        """Authenticated user cannot modify other user's instance
-        """
-        # create extra user
-        other_user = utils.get_active_user(**self.other_user_data)
-
-        # Create instance owned by other user
-        instance = self.factory()
-        setattr(instance, self.user_field_name, other_user)
-
-        # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
-        request = self.requests.put(url, data=self.alt_data)
-        force_authenticate(request, user=self.user)
-        response = self.view(request)
-
-        # Assert endpoint returns 403
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_auth_user_cannot_delete_other_users_instance(self):
-        """Authenticated user cannot delete other user's instance
-        """
-        # Create instances
-        instance = self.factory()
-        # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
-        request = self.requests.delete(url)
-        force_authenticate(request, user=self.user)
-        response = self.view(request)
-        # response = self.client.delete(url, format='json')
-
-        # Assert endpoint returns 403 code
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-'''
 

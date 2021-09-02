@@ -1,4 +1,3 @@
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from ..utils import BaseDrfTest
@@ -15,6 +14,8 @@ class NoList(BaseDrfTest):
         # Query endpoint
         url = f'{self.endpoint}'
         request = self.requests.get(url, data={})
+        import ipdb; ipdb.set_trace()
+
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -162,7 +163,7 @@ class CanDestroy(BaseDrfTest):
 
 # Extended classes
 
-class AnonNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AnonNoAccess( NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """
@@ -170,7 +171,7 @@ class AnonNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy
 
 
 
-class AnonReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
@@ -178,7 +179,7 @@ class AnonReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestro
 
 
 
-class AnonFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AnonFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """

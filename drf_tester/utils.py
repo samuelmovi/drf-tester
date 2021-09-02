@@ -13,7 +13,7 @@ def get_active_user(instance_data):
 
 
 def get_active_admin(instance_data):
-    return User.objects.createsuperuser(is_active=True, is_staff=True, **instance_data)
+    return User.objects.create(is_active=True, is_staff=True, is_superuser=True, **instance_data)
 
 
 class BaseDrfTest:
@@ -24,11 +24,11 @@ class BaseDrfTest:
     get_alt_data() must be customized as well
     """
 
-    def get_admin_user(self) -> User:
-        return get_active_admin(self.admin_data)
+    def get_admin_user(self, data:dict) -> User:
+        return get_active_admin(data)
     
-    def get_active_user(self) -> User:
-        return get_active_user(self.user_data)
+    def get_active_user(self, data:dict) -> User:
+        return get_active_user(data)
     
     def get_model_instances(self) -> list:
         """
@@ -41,7 +41,8 @@ class BaseDrfTest:
         """
         Create the required variables
         
-        """
+        TO be overwritten in final Test class:
+
         self.requests = APIRequestFactory()
         self.endpoint = None
         self.factory = None
@@ -51,4 +52,6 @@ class BaseDrfTest:
         self.view = None
         self.user_data = {}
         self.admin_data = {}
+        """
+        pass
 

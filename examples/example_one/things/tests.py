@@ -1,7 +1,7 @@
 from drf_tester.viewsets.anon_user import AnonNoAccess
 from drf_tester.viewsets.auth_user import AuthFullAccess
 from drf_tester.viewsets.admin import AdminFullAccess
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory,APITestCase
 
 from . import models
 from . import factories
@@ -9,7 +9,7 @@ from . import views
 
 # Create your tests here.
 
-class ThingViewSetTest(AnonNoAccess, AuthFullAccess, AdminFullAccess):
+class ThingViewSetTest(APITestCase, AnonNoAccess):
     """Thing viewset tests
     """
 

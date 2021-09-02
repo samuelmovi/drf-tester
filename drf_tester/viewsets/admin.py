@@ -1,4 +1,4 @@
-from rest_framework.test import force_authenticate, APITestCase
+from rest_framework.test import force_authenticate
 from rest_framework import status
 from ..utils import BaseDrfTest
 
@@ -10,7 +10,7 @@ class NoList(BaseDrfTest):
         """Admin user cannot get details on existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instances = self.get_model_instances()
 
@@ -28,7 +28,7 @@ class NoDetails(BaseDrfTest):
         """Admin user cannot get details on existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
 
@@ -47,7 +47,7 @@ class NoCreate(BaseDrfTest):
         """Admin user cannot create new instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Query endpoint
         request = self.requests.post(self.endpoint, data={})
         force_authenticate(request, user=admin_user)
@@ -62,7 +62,7 @@ class NoUpdate(BaseDrfTest):
         """Admin user cannot modify existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
 
@@ -81,7 +81,7 @@ class NoDestroy(BaseDrfTest):
         """Admin user cannot delete existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
@@ -102,7 +102,7 @@ class CanList(BaseDrfTest):
         """Admin user can list instances
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instances = self.get_model_instances()
 
@@ -123,7 +123,7 @@ class CanDetail(BaseDrfTest):
         """Admin user can list instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
@@ -141,7 +141,7 @@ class CanCreate(BaseDrfTest):
         """Admin user can create new instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
         force_authenticate(request, user=admin_user)
@@ -157,7 +157,7 @@ class CanUpdate(BaseDrfTest):
         """Admin user can modify existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
@@ -179,7 +179,7 @@ class CanDestroy(BaseDrfTest):
         """Admin user can delete existing instance
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
@@ -200,7 +200,7 @@ class CanPaginate(BaseDrfTest):
         """Admin user can paginate instances
         """
         # get admin user
-        admin_user = self.get_admin_user()
+        admin_user = self.get_admin_user(self.admin_data)
         limit = 5
         offset = 10
         # create instances
@@ -221,7 +221,7 @@ class CanPaginate(BaseDrfTest):
 
 # Extended classes
 
-class AdminNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has no access to endopint
     """
@@ -229,7 +229,7 @@ class AdminNoAccess(APITestCase, NoList, NoDetails, NoCreate, NoUpdate, NoDestro
 
 
 
-class AdminReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has only read access to endopint
     """
@@ -237,7 +237,7 @@ class AdminReadOnly(APITestCase, CanList, CanDetail, NoCreate, NoUpdate, NoDestr
 
 
 
-class AdminFullAccess(APITestCase, CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AdminFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Admin user has full access to endopint
     """
