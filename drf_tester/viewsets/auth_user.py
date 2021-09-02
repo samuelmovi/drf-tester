@@ -10,13 +10,15 @@ class NoList(BaseDrfTest):
     def test_auth_user_cannot_list_existing_instance(self):
         """Authenticated user cannot get details on existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instance
         instances = self.get_model_instances()
 
         # Query endpoint
         url = f'{self.endpoint}'
         request = self.requests.get(url, data={})
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -27,13 +29,15 @@ class NoDetails(BaseDrfTest):
     def test_auth_user_cannot_get_existing_instance(self):
         """Authenticated user cannot get details on existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instance
         instance = self.factory()
 
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
         request = self.requests.get(url, data={})
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -44,9 +48,11 @@ class NoCreate(BaseDrfTest):
     def test_auth_user_cannot_create_instance(self):
         """Authenticated user cannot create new instance
         """
+        # get user
+        user = self.get_active_user()
         # Query endpoint
         request = self.requests.post(self.endpoint, data={})
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert access is forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -57,13 +63,15 @@ class NoUpdate(BaseDrfTest):
     def test_auth_user_cannot_modify_existing_instance(self):
         """Authenticated user cannot modify existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instance
         instance = self.factory()
 
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
         request = self.requests.put(url, data={})
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -74,13 +82,15 @@ class NoDestroy(BaseDrfTest):
     def test_auth_user_cannot_delete_existing_instance(self):
         """Authenticated user cannot delete existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instances
         instance = self.factory()
 
         # Query endpoint
         url = self.endpoint + f'{instance.pk}/'
         request = self.requests.delete(url)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
 
         # Assert access forbidden
@@ -93,12 +103,14 @@ class CanList(BaseDrfTest):
     def test_auth_user_can_list_instances(self):
         """Authenticated user can list instances
         """
+        # get user
+        user = self.get_active_user()
         # Create instances
         instances = self.get_model_instances()
 
         # Request list
         request = self.requests.get(self.endpoint)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
 
         # Assert access is allowed
@@ -112,13 +124,15 @@ class CanDetail(BaseDrfTest):
     def test_auth_user_can_get_instance(self):
         """Authenticated user can list instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instances
         instance = self.factory()
 
         # Request list
         url = f"{self.endpoint}{instance.id}/"
         request = self.requests.get(url)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -128,9 +142,11 @@ class CanCreate(BaseDrfTest):
     def test_auth_user_can_create_instance(self):
         """Authenticated user can create new instance
         """
+        # get user
+        user = self.get_active_user()
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert endpoint returns created status
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -142,6 +158,8 @@ class CanUpdate(BaseDrfTest):
     def test_auth_user_can_modify_own_instance(self):
         """Authenticated user can modify existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instances
         instance = self.factory()
         # make our user the creator
@@ -151,7 +169,7 @@ class CanUpdate(BaseDrfTest):
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
         request = self.requests.put(url, self.instance_data)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
         # Assert endpoint returns OK code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -165,6 +183,8 @@ class CanDestroy(BaseDrfTest):
     def test_auth_user_can_delete_own_instance(self):
         """Authenticated user can delete existing instance
         """
+        # get user
+        user = self.get_active_user()
         # Create instances
         instance = self.factory()
         # make our user the creator
@@ -174,7 +194,7 @@ class CanDestroy(BaseDrfTest):
         # Query endpoint
         url = f'{self.endpoint}{instance.pk}/'
         request = self.requests.delete(url)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
 
         # assert 204 no content
@@ -189,13 +209,15 @@ class CanPaginate(BaseDrfTest):
         """
         limit = 5
         offset = 10
+        # get user
+        user = self.get_active_user()
         # create instances
         instances = self.get_model_instances()
 
         # Request list
         url = f"{self.endpoint}?limit={limit}&offset={offset}"
         request = self.requests.get(url)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=user)
         response = self.view(request)
 
         # Assert access is allowed
