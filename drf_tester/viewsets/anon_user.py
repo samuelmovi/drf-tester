@@ -4,17 +4,14 @@ from ..utils import BaseDrfTest
 
 
 class NoList(BaseDrfTest):
-    
     def test_anon_user_cannot_list_existing_instance(self):
-        """Anonymous user cannot get details on existing instance
-        """
+        """Anonymous user cannot get details on existing instance"""
         # Create instance
         instances = self.get_model_instances()
 
         # Query endpoint
-        url = f'{self.endpoint}'
+        url = f"{self.endpoint}"
         request = self.requests.get(url, data={})
-        import ipdb; ipdb.set_trace()
 
         response = self.view(request)
         # Assert forbidden access
@@ -22,15 +19,13 @@ class NoList(BaseDrfTest):
 
 
 class NoDetails(BaseDrfTest):
-    
     def test_anon_user_cannot_get_existing_instance(self):
-        """Anonymous user cannot get details on existing instance
-        """
+        """Anonymous user cannot get details on existing instance"""
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.get(url, data={})
         response = self.view(request)
         # Assert forbidden access
@@ -38,10 +33,8 @@ class NoDetails(BaseDrfTest):
 
 
 class NoCreate(BaseDrfTest):
-
     def test_anon_user_cannot_create_instance(self):
-        """Anonymous user cannot create new instance
-        """
+        """Anonymous user cannot create new instance"""
         # Query endpoint
         request = self.requests.post(self.endpoint, data={})
         response = self.view(request)
@@ -50,15 +43,13 @@ class NoCreate(BaseDrfTest):
 
 
 class NoUpdate(BaseDrfTest):
-
     def test_anon_user_cannot_modify_existing_instance(self):
-        """Anonymous user cannot modify existing instance
-        """
+        """Anonymous user cannot modify existing instance"""
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, data={})
         response = self.view(request)
         # Assert forbidden access
@@ -66,15 +57,13 @@ class NoUpdate(BaseDrfTest):
 
 
 class NoDestroy(BaseDrfTest):
-
     def test_anon_user_cannot_delete_existing_instance(self):
-        """Anonymous user cannot delete existing instance
-        """
+        """Anonymous user cannot delete existing instance"""
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
+        url = self.endpoint + f"{instance.pk}/"
         request = self.requests.delete(url)
         response = self.view(request)
 
@@ -86,8 +75,7 @@ class NoDestroy(BaseDrfTest):
 
 class CanList(BaseDrfTest):
     def test_anon_user_can_list_instances(self):
-        """Anonymous user can list instances
-        """
+        """Anonymous user can list instances"""
         # create instances
         expected_instances = self.get_model_instances()
         # Request list
@@ -103,12 +91,11 @@ class CanList(BaseDrfTest):
 
 class CanDetail(BaseDrfTest):
     def test_anon_user_can_get_instances(self):
-        """Anonymous user can list instances
-        """
+        """Anonymous user can list instances"""
         # create instances
         instance = self.factory()
         # Request list
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.get(url)
         response = self.view(request)
 
@@ -118,8 +105,7 @@ class CanDetail(BaseDrfTest):
 
 class CanCreate(BaseDrfTest):
     def test_anon_user_can_create_instance(self):
-        """Anonymous user can create new instance
-        """
+        """Anonymous user can create new instance"""
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
         response = self.view(request)
@@ -130,13 +116,12 @@ class CanCreate(BaseDrfTest):
 
 class CanUpdate(BaseDrfTest):
     def test_anon_user_can_modify_existing_instance(self):
-        """Anonymous user can modify existing instance
-        """
+        """Anonymous user can modify existing instance"""
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, data=self.instance_data)
         response = self.view(request)
         # Assert forbidden access
@@ -145,13 +130,12 @@ class CanUpdate(BaseDrfTest):
 
 class CanDestroy(BaseDrfTest):
     def test_anon_user_can_delete_existing_instance(self):
-        """Anonymous user can delete existing instance
-        """
+        """Anonymous user can delete existing instance"""
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.delete(url)
         response = self.view(request)
 
@@ -163,26 +147,26 @@ class CanDestroy(BaseDrfTest):
 
 # Extended classes
 
-class AnonNoAccess( NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+
+class AnonNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """
-    ...
 
+    ...
 
 
 class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
-    ...
 
+    ...
 
 
 class AnonFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """
+
     ...
-
-

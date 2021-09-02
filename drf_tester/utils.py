@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework.test import APIRequestFactory
 
-
 User = get_user_model()
 
 
@@ -24,23 +23,23 @@ class BaseDrfTest:
     get_alt_data() must be customized as well
     """
 
-    def get_admin_user(self, data:dict) -> User:
+    def get_admin_user(self, data: dict) -> User:
         return get_active_admin(data)
-    
-    def get_active_user(self, data:dict) -> User:
+
+    def get_active_user(self, data: dict) -> User:
         return get_active_user(data)
-    
+
     def get_model_instances(self) -> list:
         """
         Use provided factory to create a random amount of instances
         Return list of those instances
         """
-        return [self.factory() for i in range(random.randint(1,10))]        
+        return [self.factory() for i in range(random.randint(1, 10))]
 
     def setUp(self):
         """
         Create the required variables
-        
+
         TO be overwritten in final Test class:
 
         self.requests = APIRequestFactory()
@@ -54,4 +53,3 @@ class BaseDrfTest:
         self.admin_data = {}
         """
         pass
-

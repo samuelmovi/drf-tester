@@ -1,7 +1,6 @@
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 
-
 from .models import Thing
 
 

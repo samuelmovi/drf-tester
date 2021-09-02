@@ -1,14 +1,12 @@
-from rest_framework.test import force_authenticate
 from rest_framework import status
+from rest_framework.test import force_authenticate
+
 from ..utils import BaseDrfTest
 
 
-
 class NoList(BaseDrfTest):
-    
     def test_admin_user_cannot_list_existing_instance(self):
-        """Admin user cannot get details on existing instance
-        """
+        """Admin user cannot get details on existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instance
@@ -23,17 +21,15 @@ class NoList(BaseDrfTest):
 
 
 class NoDetails(BaseDrfTest):
-    
     def test_admin_user_cannot_get_existing_instance(self):
-        """Admin user cannot get details on existing instance
-        """
+        """Admin user cannot get details on existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.get(url, data={})
         force_authenticate(request, user=admin_user)
         response = self.view(request)
@@ -42,10 +38,8 @@ class NoDetails(BaseDrfTest):
 
 
 class NoCreate(BaseDrfTest):
-
     def test_admin_user_cannot_create_instance(self):
-        """Admin user cannot create new instance
-        """
+        """Admin user cannot create new instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Query endpoint
@@ -57,17 +51,15 @@ class NoCreate(BaseDrfTest):
 
 
 class NoUpdate(BaseDrfTest):
-
     def test_admin_user_cannot_modify_existing_instance(self):
-        """Admin user cannot modify existing instance
-        """
+        """Admin user cannot modify existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, data={})
         force_authenticate(request, user=admin_user)
         response = self.view(request)
@@ -76,17 +68,15 @@ class NoUpdate(BaseDrfTest):
 
 
 class NoDestroy(BaseDrfTest):
-
     def test_admin_user_cannot_delete_existing_instance(self):
-        """Admin user cannot delete existing instance
-        """
+        """Admin user cannot delete existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
+        url = self.endpoint + f"{instance.pk}/"
         request = self.requests.delete(url)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
@@ -99,8 +89,7 @@ class NoDestroy(BaseDrfTest):
 
 class CanList(BaseDrfTest):
     def test_admin_user_can_list_instances(self):
-        """Admin user can list instances
-        """
+        """Admin user can list instances"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
@@ -120,8 +109,7 @@ class CanList(BaseDrfTest):
 
 class CanDetail(BaseDrfTest):
     def test_admin_user_can_get_instance(self):
-        """Admin user can list instance
-        """
+        """Admin user can list instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
@@ -138,8 +126,7 @@ class CanDetail(BaseDrfTest):
 
 class CanCreate(BaseDrfTest):
     def test_admin_user_can_create_instance(self):
-        """Admin user can create new instance
-        """
+        """Admin user can create new instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Query endpoint
@@ -149,20 +136,19 @@ class CanCreate(BaseDrfTest):
         # Assert endpoint returns created status
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Assert instance exists on db
-        self.assertTrue(self.model.objects.filter(id=response.data['id']).exists())
+        self.assertTrue(self.model.objects.filter(id=response.data["id"]).exists())
 
 
 class CanUpdate(BaseDrfTest):
     def test_admin_user_can_modify_instance(self):
-        """Admin user can modify existing instance
-        """
+        """Admin user can modify existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, self.instance_data)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
@@ -176,15 +162,14 @@ class CanUpdate(BaseDrfTest):
 
 class CanDestroy(BaseDrfTest):
     def test_admin_user_can_delete_instance(self):
-        """Admin user can delete existing instance
-        """
+        """Admin user can delete existing instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.delete(url)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
@@ -197,8 +182,7 @@ class CanDestroy(BaseDrfTest):
 
 class CanPaginate(BaseDrfTest):
     def test_admin_user_can_paginate_instances(self):
-        """Admin user can paginate instances
-        """
+        """Admin user can paginate instances"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         limit = 5
@@ -216,29 +200,31 @@ class CanPaginate(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert only 2 instances in response
         payload = response.json()
-        self.assertTrue( len(payload['results']) <= 5)
+        self.assertTrue(len(payload["results"]) <= 5)
 
 
 # Extended classes
+
 
 class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has no access to endopint
     """
-    ...
 
+    ...
 
 
 class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has only read access to endopint
     """
-    ...
 
+    ...
 
 
 class AdminFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Admin user has full access to endopint
     """
+
     ...

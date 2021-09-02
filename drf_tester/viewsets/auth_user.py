@@ -1,22 +1,19 @@
-from rest_framework.test import force_authenticate
 from rest_framework import status
+from rest_framework.test import force_authenticate
 
 from ..utils import BaseDrfTest
 
 
-
 class NoList(BaseDrfTest):
-    
     def test_auth_user_cannot_list_existing_instance(self):
-        """Authenticated user cannot get details on existing instance
-        """
+        """Authenticated user cannot get details on existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instance
         instances = self.get_model_instances()
 
         # Query endpoint
-        url = f'{self.endpoint}'
+        url = f"{self.endpoint}"
         request = self.requests.get(url, data={})
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -25,17 +22,15 @@ class NoList(BaseDrfTest):
 
 
 class NoDetails(BaseDrfTest):
-    
     def test_auth_user_cannot_get_existing_instance(self):
-        """Authenticated user cannot get details on existing instance
-        """
+        """Authenticated user cannot get details on existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.get(url, data={})
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -44,10 +39,8 @@ class NoDetails(BaseDrfTest):
 
 
 class NoCreate(BaseDrfTest):
-
     def test_auth_user_cannot_create_instance(self):
-        """Authenticated user cannot create new instance
-        """
+        """Authenticated user cannot create new instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Query endpoint
@@ -59,17 +52,15 @@ class NoCreate(BaseDrfTest):
 
 
 class NoUpdate(BaseDrfTest):
-
     def test_auth_user_cannot_modify_existing_instance(self):
-        """Authenticated user cannot modify existing instance
-        """
+        """Authenticated user cannot modify existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, data={})
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -78,17 +69,15 @@ class NoUpdate(BaseDrfTest):
 
 
 class NoDestroy(BaseDrfTest):
-
     def test_auth_user_cannot_delete_existing_instance(self):
-        """Authenticated user cannot delete existing instance
-        """
+        """Authenticated user cannot delete existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
+        url = self.endpoint + f"{instance.pk}/"
         request = self.requests.delete(url)
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -101,8 +90,7 @@ class NoDestroy(BaseDrfTest):
 
 class CanList(BaseDrfTest):
     def test_auth_user_can_list_instances(self):
-        """Authenticated user can list instances
-        """
+        """Authenticated user can list instances"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
@@ -122,8 +110,7 @@ class CanList(BaseDrfTest):
 
 class CanDetail(BaseDrfTest):
     def test_auth_user_can_get_instance(self):
-        """Authenticated user can list instance
-        """
+        """Authenticated user can list instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
@@ -140,8 +127,7 @@ class CanDetail(BaseDrfTest):
 
 class CanCreate(BaseDrfTest):
     def test_auth_user_can_create_instance(self):
-        """Authenticated user can create new instance
-        """
+        """Authenticated user can create new instance"""
         # get user
         user = self.get_active_user()
         # Query endpoint
@@ -151,20 +137,19 @@ class CanCreate(BaseDrfTest):
         # Assert endpoint returns created status
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Assert instance exists on db
-        self.assertTrue(self.model.objects.filter(id=response.data['id']).exists())
+        self.assertTrue(self.model.objects.filter(id=response.data["id"]).exists())
 
 
 class CanUpdate(BaseDrfTest):
     def test_auth_user_can_modify_instance(self):
-        """Authenticated user can modify existing instance
-        """
+        """Authenticated user can modify existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, self.instance_data)
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -178,15 +163,14 @@ class CanUpdate(BaseDrfTest):
 
 class CanDestroy(BaseDrfTest):
     def test_auth_user_can_delete_instance(self):
-        """Authenticated user can delete existing instance
-        """
+        """Authenticated user can delete existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
 
         # Query endpoint
-        url = f'{self.endpoint}{instance.pk}/'
+        url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.delete(url)
         force_authenticate(request, user=user)
         response = self.view(request)
@@ -199,8 +183,7 @@ class CanDestroy(BaseDrfTest):
 
 class CanPaginate(BaseDrfTest):
     def test_auth_user_can_paginate_instances(self):
-        """authenticated user can paginate instances
-        """
+        """authenticated user can paginate instances"""
         limit = 5
         offset = 10
         # get user
@@ -218,15 +201,17 @@ class CanPaginate(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert only 2 instances in response
         payload = response.json()
-        self.assertTrue( len(payload['results']) <= 5)
+        self.assertTrue(len(payload["results"]) <= 5)
 
 
 # EXTENDED CLASSES
+
 
 class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     """
     Authenticated user has full access to endopint
     """
+
     ...
 
 
@@ -234,6 +219,7 @@ class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has no access to endopint
     """
+
     ...
 
 
@@ -241,5 +227,5 @@ class AuthReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has only read access to endopint
     """
-    ...
 
+    ...
