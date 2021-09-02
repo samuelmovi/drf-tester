@@ -5,8 +5,14 @@ This module aims to minimize the time of test development, and increase while pr
 
 ## Table of Contents
 
-- [Viwset Tests](#viewset-tests)
+- [Requirements](#requirements)
+- [Viewset Tests](#viewset-tests)
+- [Installing locally](#installing-locally)
 
+## Requirements
+
+- Python >= 3.7
+- DjagnoRESTFramework >= 3.12.2
 
 
 ## Viewset Tests
@@ -25,4 +31,13 @@ They are separated in relation to the user querying the endpoing, and the action
 
 On each file we have classes covering every action, and some extended classes with convenient groupings of the more basic classes
 
+
+
+## Installing Locally
+
+To install the package locally: 
+
+```bash
+pip install .
+```
 
