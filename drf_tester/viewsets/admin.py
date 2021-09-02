@@ -1,125 +1,245 @@
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import force_authenticate
+from rest_framework import status
 
-from .. import utils
+from ..utils import BaseDrfTest
 
 
-class FullAccess:
-    """
-    User has wide access to all endopints and the instances,
-    irregardless of who created them
-    """
 
-    def setUp(self):
-        self.requests = APIRequestFactory()
-        self.endpoint = None
-        self.factory = None
-        self.model = None
-        self.instance_data = {}
-        self.alt_data = {}
-        self.view = None
-        # users
-        self.user_data = {}
-        self.user = utils.get_active_admin(**self.user_data)
+class NoList(BaseDrfTest):
+    
+    def test_admin_user_cannot_list_existing_instance(self):
+        """Admin user cannot get details on existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instance
+        instances = self.get_model_instances()
 
-    def test_admin_user_can_list(self):
-
-        # Authenticate
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
-        # create instances
-        expected_instances = [self.factory() for i in range(random.randint(1,5))]
-        # query endpoint
-        request = self.requests.get(self.endpoint)
-        force_authenticate(request, user=self.user)
+        # Query endpoint
+        request = self.requests.get(self.endpoint, data={})
+        force_authenticate(request, user=admin_user)
         response = self.view(request)
-        # response = self.client.get(self.endpoint)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # assertions
-        self.assertEquals(response.status_code, 200)
-        payload = response.json()
-        self.assertEquals(len(expected_instances), len(payload))
 
-    def test_admin_user_can_get_details(self):
-        # make user site amdin
-        # self.user.role = 'SITE_ADMIN'
-        # self.user.save()
-
-        # Authenticate
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
-        # create instances
+class NoDetails(BaseDrfTest):
+    
+    def test_admin_user_cannot_get_existing_instance(self):
+        """Admin user cannot get details on existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instance
         instance = self.factory()
-        url = f"{self.endpoint}{instance.id}/"
-        # query endpoint
-        request = self.requests.get(url)
-        force_authenticate(request, user=self.user)
+
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.get(url, data={})
+        force_authenticate(request, user=admin_user)
         response = self.view(request)
-        # response = self.client.get(url)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # assertions
-        self.assertEquals(response.status_code, 200)
-        payload = response.json()
-        self.assertEquals(instance.id, payload['id'])
 
-    def test_admin_can_create_instance(self):
-        # make user site amdin
-        # self.user.role = 'SITE_ADMIN'
-        # self.user.save()
+class NoCreate(BaseDrfTest):
 
-        # Authenticate
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
-        # query endpoint
-        request = self.requests.post(self.endpoint, data=self.instance_data)
-        force_authenticate(request, user=self.user)
+    def test_admin_user_cannot_create_instance(self):
+        """Admin user cannot create new instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Query endpoint
+        request = self.requests.post(self.endpoint, data={})
+        force_authenticate(request, user=admin_user)
         response = self.view(request)
-        # response = self.client.post(self.endpoint, data=data)
+        # Assert access is forbidden
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # assertions
-        self.assertEquals(response.status_code, 201)
-        payload = response.json()
-        # TODO: check response values
-        self.assertEquals(data['name'], payload['name'])
 
-    def test_admin_can_update_instance(self):
-        # make user site amdin
-        # self.user.role = 'SITE_ADMIN'
-        # self.user.save()
+class NoUpdate(BaseDrfTest):
 
-        # Authenticate
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
-        # create instance
+    def test_admin_user_cannot_modify_existing_instance(self):
+        """Admin user cannot modify existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instance
         instance = self.factory()
-        url = f"{self.endpoint}{instance.id}/"
 
-        # query endpoint
-        request = self.requests.put(url, data=self.alt_data)
-        force_authenticate(request, user=self.user)
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.put(url, data={})
+        force_authenticate(request, user=admin_user)
         response = self.view(request)
-        # response = self.client.put(url, data=data)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # assertions
-        self.assertEquals(response.status_code, 200)
-        payload = response.json()
-        # TODO: check response values
-        self.assertEquals(data['name'], payload['name'])
 
-    def test_admin_can_delete_instance(self):
-        # create instance
+class NoDestroy(BaseDrfTest):
+
+    def test_admin_user_cannot_delete_existing_instance(self):
+        """Admin user cannot delete existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instances
         instance = self.factory()
-        url = f"{self.endpoint}{instance.id}/"
 
-        # query endpoint
+        # Query endpoint
+        url = self.endpoint + f'{instance.pk}/'
         request = self.requests.delete(url)
-        force_authenticate(request, user=self.user)
+        force_authenticate(request, user=admin_user)
         response = self.view(request)
-        # response = self.client.delete(url)
 
-        # assertions
-        self.assertEquals(response.status_code, 204)
+        # Assert access forbidden
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # Assert instance still exists on db
+        self.assertTrue(self.model.objects.get(id=instance.pk))
 
+
+class CanList(BaseDrfTest):
+    def test_admin_user_can_list_instances(self):
+        """Admin user can list instances
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instances
+        instances = self.get_model_instances()
+
+        # Request list
+        request = self.requests.get(self.endpoint)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+
+        # Assert access is allowed
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert all instances are returned
+        self.assertEqual(len(instances), len(response.data))
+
+
+class CanDetail(BaseDrfTest):
+    def test_admin_user_can_get_instance(self):
+        """Admin user can list instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instances
+        instance = self.factory()
+
+        # Request list
+        url = f"{self.endpoint}{instance.id}/"
+        request = self.requests.get(url)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+        # Assert access is allowed
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class CanCreate(BaseDrfTest):
+    def test_admin_user_can_create_instance(self):
+        """Admin user can create new instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Query endpoint
+        request = self.requests.post(self.endpoint, data=self.instance_data)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+        # Assert endpoint returns created status
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Assert instance exists on db
+        self.assertTrue(self.model.objects.filter(id=response.data['id']).exists())
+
+
+class CanUpdate(BaseDrfTest):
+    def test_admin_user_can_modify_instance(self):
+        """Admin user can modify existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instances
+        instance = self.factory()
+
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.put(url, self.instance_data)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+        # Assert endpoint returns OK code
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Assert instance has been modified
+        for key, value in response.data.items():
+            self.assertEqual(self.instance_data[key], value)
+
+
+class CanDestroy(BaseDrfTest):
+    def test_admin_user_can_delete_instance(self):
+        """Admin user can delete existing instance
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        # Create instances
+        instance = self.factory()
+
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.delete(url)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+
+        # assert 204 no content
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # Assert instance doesn't exists anymore on db
+        self.assertFalse(self.model.objects.filter(id=instance.pk).exists())
+
+
+class CanPaginate(BaseDrfTest):
+    def test_admin_user_can_paginate_instances(self):
+        """Admin user can paginate instances
+        """
+        # get admin user
+        admin_user = self.get_admin_user()
+        limit = 5
+        offset = 10
+        # create instances
+        instances = self.get_model_instances()
+
+        # Request list
+        url = f"{self.endpoint}?limit={limit}&offset={offset}"
+        request = self.requests.get(url)
+        force_authenticate(request, user=admin_user)
+        response = self.view(request)
+
+        # Assert access is allowed
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert only 2 instances in response
+        payload = response.json()
+        self.assertTrue( len(payload['results']) <= 5)
+
+
+# Extended classes
+
+class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+    """
+    Admin user has no access to endopint
+    """
+    ...
+
+
+
+class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+    """
+    Admin user has only read access to endopint
+    """
+    ...
+
+
+
+class AdminFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+    """
+    Admin user has full access to endopint
+    """
+    ...

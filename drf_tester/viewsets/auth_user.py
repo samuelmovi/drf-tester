@@ -1,66 +1,105 @@
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import force_authenticate
+from rest_framework import status
 
-from .. import utils
+from ..utils import BaseDrfTest
 
 
-class FullAccess:
-    """
-    User has wide access to all endopints and the instances,
-    irregardless of who created them
-    """
 
-    def setUp(self):
-        self.requests = APIRequestFactory()
-        self.endpoint = None
-        self.factory = None
-        self.model = None
-        self.instance_data = {}
-        self.alt_data = {}
-        self.view = None
-        # users
-        self.user_data = {}
-        self.user = utils.get_active_user(**self.user_data)
-
-    # authenticated user
-    def test_auth_user_can_paginate_instances(self):
-        """authenticated user can paginate instances
+class NoList(BaseDrfTest):
+    
+    def test_auth_user_cannot_list_existing_instance(self):
+        """Authenticated user cannot get details on existing instance
         """
-        # Authenticate
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-        limit = 5
-        offset = 10
-        # create instances
-        instances = [self.factory(creator=self.user) for n in range(12)]
+        # Create instance
+        instances = self.get_model_instances()
 
-        # Request list
-        url = f"{self.endpoint}?limit={limit}&offset={offset}"
-        request = self.requests.get(url)
+        # Query endpoint
+        url = f'{self.endpoint}'
+        request = self.requests.get(url, data={})
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.get(url)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        # Assert access is allowed
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # assert only 2 instances in response
-        payload = response.json()
-        self.assertEquals(2, len(payload['results']))
 
-    def test_auth_user_can_list_instances(self):
-        """Regular logged-in user can list instance
+class NoDetails(BaseDrfTest):
+    
+    def test_auth_user_cannot_get_existing_instance(self):
+        """Authenticated user cannot get details on existing instance
+        """
+        # Create instance
+        instance = self.factory()
+
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.get(url, data={})
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class NoCreate(BaseDrfTest):
+
+    def test_auth_user_cannot_create_instance(self):
+        """Authenticated user cannot create new instance
+        """
+        # Query endpoint
+        request = self.requests.post(self.endpoint, data={})
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+        # Assert access is forbidden
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class NoUpdate(BaseDrfTest):
+
+    def test_auth_user_cannot_modify_existing_instance(self):
+        """Authenticated user cannot modify existing instance
+        """
+        # Create instance
+        instance = self.factory()
+
+        # Query endpoint
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.put(url, data={})
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+        # Assert forbidden access
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class NoDestroy(BaseDrfTest):
+
+    def test_auth_user_cannot_delete_existing_instance(self):
+        """Authenticated user cannot delete existing instance
         """
         # Create instances
-        instances = [self.factory() for n in range(random.randint(1,5))]
+        instance = self.factory()
 
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
+        # Query endpoint
+        url = self.endpoint + f'{instance.pk}/'
+        request = self.requests.delete(url)
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+
+        # Assert access forbidden
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # Assert instance still exists on db
+        self.assertTrue(self.model.objects.get(id=instance.pk))
+
+
+class CanList(BaseDrfTest):
+    def test_auth_user_can_list_instances(self):
+        """Authenticated user can list instances
+        """
+        # Create instances
+        instances = self.get_model_instances()
 
         # Request list
         request = self.requests.get(self.endpoint)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.get(self.endpoint)
 
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -68,49 +107,40 @@ class FullAccess:
         # Assert all instances are returned
         self.assertEqual(len(instances), len(response.data))
 
+
+class CanDetail(BaseDrfTest):
     def test_auth_user_can_get_instance(self):
-        """Regular logged-in user can list instance
+        """Authenticated user can list instance
         """
         # Create instances
         instance = self.factory()
-
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
 
         # Request list
         url = f"{self.endpoint}{instance.id}/"
         request = self.requests.get(url)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.get(url)
-
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = json.loads(response.content)
-        self.assertEquals(instance.id, data['id'])
 
+
+class CanCreate(BaseDrfTest):
     def test_auth_user_can_create_instance(self):
-        """Regular logged-in user can create new instance
+        """Authenticated user can create new instance
         """
-
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.post(self.endpoint, data=self.instance_data, format='json')
         # Assert endpoint returns created status
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
         # Assert instance exists on db
-        self.assertTrue(self.model.objects.get(id=response.data['id']))
+        self.assertTrue(self.model.objects.filter(id=response.data['id']).exists())
 
+
+class CanUpdate(BaseDrfTest):
     def test_auth_user_can_modify_own_instance(self):
-        """Regular logged-in user can modify existing instance
+        """Authenticated user can modify existing instance
         """
         # Create instances
         instance = self.factory()
@@ -118,27 +148,22 @@ class FullAccess:
         instance.creator = self.user
         instance.save()
 
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
         # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
-        request = self.requests.put(url, self.alt_data)
+        url = f'{self.endpoint}{instance.pk}/'
+        request = self.requests.put(url, self.instance_data)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.put(url, data, format='json')
         # Assert endpoint returns OK code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Assert instance has been modified
-        for key in data:
-            if key == 'company':
-                continue
-            self.assertEqual(data[key], response.data[key])
+        for key, value in response.data.items():
+            self.assertEqual(self.instance_data[key], value)
 
+
+class CanDestroy(BaseDrfTest):
     def test_auth_user_can_delete_own_instance(self):
-        """Regular logged-in user can delete existing instance
+        """Authenticated user can delete existing instance
         """
         # Create instances
         instance = self.factory()
@@ -146,16 +171,11 @@ class FullAccess:
         instance.creator = self.user
         instance.save()
 
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
         # Query endpoint
-        url = self.endpoint + f'{instance.pk}/'
+        url = f'{self.endpoint}{instance.pk}/'
         request = self.requests.delete(url)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.delete(url)
 
         # assert 204 no content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -163,6 +183,53 @@ class FullAccess:
         self.assertFalse(self.model.objects.filter(id=instance.pk).exists())
 
 
+class CanPaginate(BaseDrfTest):
+    def test_auth_user_can_paginate_instances(self):
+        """authenticated user can paginate instances
+        """
+        limit = 5
+        offset = 10
+        # create instances
+        instances = self.get_model_instances()
+
+        # Request list
+        url = f"{self.endpoint}?limit={limit}&offset={offset}"
+        request = self.requests.get(url)
+        force_authenticate(request, user=self.user)
+        response = self.view(request)
+
+        # Assert access is allowed
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert only 2 instances in response
+        payload = response.json()
+        self.assertTrue( len(payload['results']) <= 5)
+
+
+# EXTENDED CLASSES
+
+class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+    """
+    Authenticated user has full access to endopint
+    """
+    ...
+
+
+class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+    """
+    Authenticated user has no access to endopint
+    """
+    ...
+
+
+class AuthReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+    """
+    Authenticated user has only read access to endopint
+    """
+    ...
+
+
+
+'''
 class IndividualAccess:
     """
     User has wide access to all endopints and the instances created by that user
@@ -192,16 +259,11 @@ class IndividualAccess:
         instance = self.factory()
         setattr(instance, self.user_field_name, other_user)
 
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
         # Query endpoint
         url = self.endpoint + f'{instance.pk}/'
         request = self.requests.put(url, data=self.alt_data)
         force_authenticate(request, user=self.user)
         response = self.view(request)
-        # response = self.client.put(url, data=data, format='json')
 
         # Assert endpoint returns 403
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -211,11 +273,6 @@ class IndividualAccess:
         """
         # Create instances
         instance = self.factory()
-
-        # Authenticate user
-        # token = get_tokens_for_user(self.user)
-        # self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token['access']}")
-
         # Query endpoint
         url = self.endpoint + f'{instance.pk}/'
         request = self.requests.delete(url)
@@ -226,4 +283,5 @@ class IndividualAccess:
         # Assert endpoint returns 403 code
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+'''
 
