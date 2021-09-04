@@ -82,9 +82,8 @@ class CanList(BaseDrfTest):
 
         # Assert access is forbidden
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        payload = response.json()
         # Assert number of instances in response
-        self.assertEquals(len(expected_instances), len(payload))
+        self.assertEquals(len(expected_instances), len(response.data))
 
 
 class CanDetail(BaseDrfTest):
