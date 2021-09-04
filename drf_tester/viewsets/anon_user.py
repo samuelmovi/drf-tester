@@ -49,9 +49,8 @@ class NoUpdate(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.put(url, data={})
-        response = self.view(request)
+        request = self.requests.put(self.endpoint, data={})
+        response = self.view(request, pk=instance.pk)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -63,9 +62,8 @@ class NoDestroy(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = self.endpoint + f"{instance.pk}/"
-        request = self.requests.delete(url)
-        response = self.view(request)
+        request = self.requests.delete(self.endpoint)
+        response = self.view(request, pk=instance.pk)
 
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -121,9 +119,8 @@ class CanUpdate(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.put(url, data=self.instance_data)
-        response = self.view(request)
+        request = self.requests.put(self.endpoint, data=self.instance_data)
+        response = self.view(request, pk=instance.pk)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -135,9 +132,8 @@ class CanDestroy(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.delete(url)
-        response = self.view(request)
+        request = self.requests.delete(self.endpoint)
+        response = self.view(request, pk=instance.pk)
 
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

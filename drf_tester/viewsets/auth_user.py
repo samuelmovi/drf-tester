@@ -129,7 +129,7 @@ class CanCreate(BaseDrfTest):
     def test_auth_user_can_create_instance(self):
         """Authenticated user can create new instance"""
         # get user
-        user = self.get_active_user()
+        user = self.get_active_user(self.user_data)
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
         force_authenticate(request, user=user)
@@ -149,16 +149,15 @@ class CanUpdate(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.put(url, self.instance_data)
+        request = self.requests.put(self.endpoint, self.instance_data)
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert endpoint returns OK code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Assert instance has been modified
-        for key, value in response.data.items():
-            self.assertEqual(self.instance_data[key], value)
+        for key, value in self.instance_data.items():
+            self.assertEqual(response.data.get(key), value)
 
 
 class CanDestroy(BaseDrfTest):
@@ -170,10 +169,9 @@ class CanDestroy(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.delete(url)
+        request = self.requests.delete(self.endpoint)
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
 
         # assert 204 no content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

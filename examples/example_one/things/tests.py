@@ -9,7 +9,7 @@ from . import factories, models, views
 # Create your tests here.
 
 
-class ThingViewSetTest(APITestCase, AnonNoAccess):
+class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAccess):
     """Thing viewset tests"""
 
     def setUp(self):
@@ -18,7 +18,10 @@ class ThingViewSetTest(APITestCase, AnonNoAccess):
         self.endpoint = "/api/v1/things/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
-        self.view = views.ThingViewSet
+        self.view = views.ThingViewSet.as_view(
+            {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
+        )
+        # self.detail_view = views.MoistureCheckViewSet.as_view({"get": "retrieve"})
         self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
