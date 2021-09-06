@@ -5,13 +5,12 @@ from ..utils import BaseDrfTest
 
 
 class NoList(BaseDrfTest):
-    def test_admin_user_cannot_list_existing_instance(self):
-        """Admin user cannot get details on existing instance"""
+    def test_admin_user_cannot_list_existing_instances(self):
+        """Admin user cannot list existing instances"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
-        # Create instance
+        # Create instances
         instances = self.get_model_instances()
-
         # Query endpoint
         request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=admin_user)
@@ -27,12 +26,10 @@ class NoRetrieve(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
-
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.get(url, data={})
+        request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=admin_user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -57,7 +54,6 @@ class NoUpdate(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instance
         instance = self.factory()
-
         # Query endpoint
         url = f"{self.endpoint}{instance.pk}/"
         request = self.requests.put(url, data={})
@@ -74,13 +70,11 @@ class NoDestroy(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         url = self.endpoint + f"{instance.pk}/"
         request = self.requests.delete(url)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
-
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Assert instance still exists on db
@@ -94,32 +88,27 @@ class CanList(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instances = self.get_model_instances()
-
         # Request list
         request = self.requests.get(self.endpoint)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
-
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         # Assert all instances are returned
         self.assertEqual(len(instances), len(response.data))
 
 
 class CanRetrieve(BaseDrfTest):
     def test_admin_user_can_get_instance(self):
-        """Admin user can list instance"""
+        """Admin user can get instance"""
         # get admin user
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
-
         # Request list
-        url = f"{self.endpoint}{instance.id}/"
-        request = self.requests.get(url)
+        request = self.requests.get(self.endpoint)
         force_authenticate(request, user=admin_user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -147,7 +136,6 @@ class CanUpdate(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.put(self.endpoint, self.instance_data)
         force_authenticate(request, user=admin_user)
@@ -164,12 +152,10 @@ class CanDestroy(BaseDrfTest):
         admin_user = self.get_admin_user(self.admin_data)
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.delete(self.endpoint)
         force_authenticate(request, user=admin_user)
         response = self.view(request, pk=instance.id)
-
         # assert 204 no content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # Assert instance doesn't exists anymore on db
@@ -185,13 +171,11 @@ class CanPaginate(BaseDrfTest):
         offset = 10
         # create instances
         instances = self.get_model_instances()
-
         # Request list
         url = f"{self.endpoint}?limit={limit}&offset={offset}"
         request = self.requests.get(url)
         force_authenticate(request, user=admin_user)
         response = self.view(request)
-
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert only 2 instances in response

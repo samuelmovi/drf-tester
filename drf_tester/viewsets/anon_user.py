@@ -5,14 +5,12 @@ from ..utils import BaseDrfTest
 
 class NoList(BaseDrfTest):
     def test_anon_user_cannot_list_existing_instance(self):
-        """Anonymous user cannot get details on existing instance"""
+        """Anonymous user cannot list existing instances"""
         # Create instance
         instances = self.get_model_instances()
-
         # Query endpoint
         url = f"{self.endpoint}"
         request = self.requests.get(url, data={})
-
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -23,11 +21,9 @@ class NoRetrieve(BaseDrfTest):
         """Anonymous user cannot get details on existing instance"""
         # Create instance
         instance = self.factory()
-
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.get(url, data={})
-        response = self.view(request)
+        request = self.requests.get(self.endpoint, data={})
+        response = self.view(request, pk=instance.id)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -47,7 +43,6 @@ class NoUpdate(BaseDrfTest):
         """Anonymous user cannot modify existing instance"""
         # Create instance
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.put(self.endpoint, data={})
         response = self.view(request, pk=instance.pk)
@@ -60,11 +55,9 @@ class NoDestroy(BaseDrfTest):
         """Anonymous user cannot delete existing instance"""
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.delete(self.endpoint)
         response = self.view(request, pk=instance.pk)
-
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Assert instance still exists on db
@@ -79,7 +72,6 @@ class CanList(BaseDrfTest):
         # Request list
         request = self.requests.get(self.endpoint)
         response = self.view(request)
-
         # Assert access is forbidden
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Assert number of instances in response
@@ -92,10 +84,8 @@ class CanRetrieve(BaseDrfTest):
         # create instances
         instance = self.factory()
         # Request list
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.get(url)
-        response = self.view(request)
-
+        request = self.requests.get(self.endpoint)
+        response = self.view(request, pk=instance.pk)
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -112,13 +102,11 @@ class CanCreate(BaseDrfTest):
         self.check_equal_data(self.instance_data, response.data)
 
 
-
 class CanUpdate(BaseDrfTest):
     def test_anon_user_can_modify_existing_instance(self):
         """Anonymous user can modify existing instance"""
         # Create instance
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.put(self.endpoint, data=self.instance_data)
         response = self.view(request, pk=instance.pk)

@@ -30,10 +30,9 @@ class NoRetrieve(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.get(url, data={})
+        request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -117,10 +116,9 @@ class CanRetrieve(BaseDrfTest):
         instance = self.factory()
 
         # Request list
-        url = f"{self.endpoint}{instance.id}/"
-        request = self.requests.get(url)
+        request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
