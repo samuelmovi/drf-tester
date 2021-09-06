@@ -1,3 +1,7 @@
+
+import datetime
+from decimal import Decimal
+
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from drf_tester.viewsets.admin import AdminFullAccess
@@ -7,6 +11,17 @@ from drf_tester.viewsets.auth_user import AuthFullAccess
 from . import factories, models, views
 
 # Create your tests here.
+
+
+USER_DATA = {
+    "username": "test_user",
+    "password": "jioqwehjnr890qweufno8we",
+}
+
+ADMIN_DATA = {
+    "username": "admin_user",
+    "password": "jioqwehjnr890qweufnrereo8we",
+}
 
 
 class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAccess):
@@ -30,15 +45,12 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         # instance data
         self.instance_data = {
             "name": "test thing name",
+            "number": 5,
+            "decimal_number": '1234.56',
+            "timestamp": datetime.datetime.now().isoformat()
         }
-        self.user_data = {
-            "username": "test_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
-        self.admin_data = {
-            "username": "admin_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
+        self.user_data = USER_DATA
+        self.admin_data = ADMIN_DATA
 
 
 class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAccess):
@@ -63,14 +75,8 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
         self.instance_data = {
             "name": "test thing name",
         }
-        self.user_data = {
-            "username": "test_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
-        self.admin_data = {
-            "username": "admin_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
+        self.user_data = USER_DATA
+        self.admin_data = ADMIN_DATA
 
 
 class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAccess):
@@ -95,12 +101,6 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.instance_data = {
             "name": "test thing name",
         }
-        self.user_data = {
-            "username": "test_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
-        self.admin_data = {
-            "username": "admin_user",
-            "password": "jioqwehjnr890qweufno8we",
-        }
+        self.user_data = USER_DATA
+        self.admin_data = ADMIN_DATA
 
