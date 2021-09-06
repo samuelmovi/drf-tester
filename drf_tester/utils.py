@@ -2,7 +2,6 @@ import random
 
 from django.contrib.auth import get_user_model
 
-from rest_framework.test import APIRequestFactory
 
 User = get_user_model()
 
@@ -36,12 +35,15 @@ class BaseDrfTest:
     def get_active_user(self, data: dict) -> User:
         return get_active_user(data)
 
-    def get_model_instances(self) -> list:
+    def get_model_instances(self, amount:int=None) -> list:
         """
-        Use provided factory to create a random amount of instances, between
+        Use provided factory to create a random amount of instances, or exact amount if provided
         Return list of those instances
         """
-        return [self.factory() for i in range(random.randint(self.MIN, self.MAX))]
+        if amount:
+            return [self.factory() for i in range(amount)]
+        else:
+            return [self.factory() for i in range(random.randint(self.MIN, self.MAX))]
 
     def setUp(self):
         """
