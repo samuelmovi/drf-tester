@@ -23,6 +23,13 @@ ADMIN_DATA = {
     "password": "jioqwehjnr890qweufnrereo8we",
 }
 
+INSTANCE_DATA = {
+    "name": "test thing name",
+    "number": 5,
+    "decimal_number": '1234.56',
+    "timestamp": datetime.datetime.now().isoformat()
+}
+
 
 class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAccess):
     """
@@ -39,16 +46,10 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         self.view = views.ThingViewSet.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # self.detail_view = views.MoistureCheckViewSet.as_view({"get": "retrieve"})
         self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
-        self.instance_data = {
-            "name": "test thing name",
-            "number": 5,
-            "decimal_number": '1234.56',
-            "timestamp": datetime.datetime.now().isoformat()
-        }
+        self.instance_data = INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
@@ -68,13 +69,10 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
         self.view = views.ThingViewSet2.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # self.detail_view = views.MoistureCheckViewSet.as_view({"get": "retrieve"})
         self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
-        self.instance_data = {
-            "name": "test thing name",
-        }
+        self.instance_data = INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
@@ -94,13 +92,10 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.view = views.ThingViewSet3.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # self.detail_view = views.MoistureCheckViewSet.as_view({"get": "retrieve"})
         self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
-        self.instance_data = {
-            "name": "test thing name",
-        }
+        self.instance_data = INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
