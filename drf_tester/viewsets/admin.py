@@ -206,21 +206,18 @@ class AdminNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has no access to endopint
     """
-
-    ...
+    pass
 
 
 class AdminReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has only read access to endopint
     """
-
-    ...
+    pass
 
 
 class AdminFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Admin user has full access to endopint
     """
-
-    ...
+    pass

@@ -132,14 +132,12 @@ class CanDestroy(BaseDrfTest):
         """Anonymous user can delete existing instance"""
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.delete(self.endpoint)
         response = self.view(request, pk=instance.pk)
-
-        # Assert access forbidden
+        # Assert access allowed
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        # Assert instance still exists on db
+        # Assert instance doesn't exist on db
         self.assertFalse(self.model.objects.filter(id=instance.pk).exists())
 
 
@@ -150,21 +148,18 @@ class AnonNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """
-
-    ...
+    pass
 
 
 class AnonReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
-
-    ...
+    pass
 
 
 class AnonFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """
-
-    ...
+    pass
