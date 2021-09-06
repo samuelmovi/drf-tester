@@ -22,7 +22,7 @@ ADMIN_DATA = {
     "password": "jioqwehjnr890qweufnrereo8we",
 }
 
-INSTANCE_DATA = {
+THING_INSTANCE_DATA = {
     "name": "test thing name",
     "number": 5,
     "decimal_number": "1234.56",
@@ -43,9 +43,8 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         self.factory = factories.ThingFactory
         self.model = models.Thing
         self.view = views.ThingViewSet.as_view({"get": "list", "post": "create", "put": "update", "delete": "destroy"})
-        self.model = models.Thing
         # instance data
-        self.instance_data = INSTANCE_DATA
+        self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
@@ -65,9 +64,8 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
         self.view = views.ThingViewSet2.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        self.model = models.Thing
         # instance data
-        self.instance_data = INSTANCE_DATA
+        self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
@@ -87,25 +85,27 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.view = views.ThingViewSet3.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        self.model = models.Thing
         # instance data
-        self.instance_data = INSTANCE_DATA
+        self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
 
 
 class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess):
+    """
+    Auth Only.
+    Update and delete require user==instance.creator
+    """
 
     def setUp(self):
         """Tests setup"""
         self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/property/"
         self.factory = factories.PropertyFactory
-        self.model = models.Thing
+        self.model = models.Property
         self.view = views.PropertyViewSet.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        self.model = models.Thing
         # instance data
         self.instance_data = {
             "name": "TEST property name",
