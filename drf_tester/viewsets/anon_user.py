@@ -108,7 +108,7 @@ class CanCreate(BaseDrfTest):
         response = self.view(request)
         # Assert instance is created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(self.model.objects.get(id=response.data.instance.pk))
+        self.assertTrue(self.model.objects.get(id=response.data.get('id')))
         self.check_equal_data(self.instance_data, response.data)
 
 
@@ -138,9 +138,9 @@ class CanDestroy(BaseDrfTest):
         response = self.view(request, pk=instance.pk)
 
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # Assert instance still exists on db
-        self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
+        self.assertFalse(self.model.objects.filter(id=instance.pk).exists())
 
 
 # Extended classes

@@ -18,7 +18,7 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
     def setUp(self):
         """Tests setup"""
         self.requests = APIRequestFactory()
-        self.endpoint = "/api/v1/things/"
+        self.endpoint = "/api/v1/things/is_authenticated/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
         self.view = views.ThingViewSet.as_view(
@@ -50,7 +50,7 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
     def setUp(self):
         """Tests setup"""
         self.requests = APIRequestFactory()
-        self.endpoint = "/api/v1/things/"
+        self.endpoint = "/api/v1/things/auth_or_readonly/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
         self.view = views.ThingViewSet2.as_view(
@@ -82,10 +82,10 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
     def setUp(self):
         """Tests setup"""
         self.requests = APIRequestFactory()
-        self.endpoint = "/api/v1/things/"
+        self.endpoint = "/api/v1/things/allow_any/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
-        self.view = views.ThingViewSet2.as_view(
+        self.view = views.ThingViewSet3.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
         # self.detail_view = views.MoistureCheckViewSet.as_view({"get": "retrieve"})

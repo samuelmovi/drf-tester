@@ -2,3 +2,4 @@ Django==2.2.17
 djangorestframework==3.12.4
 black==21.8b0
 isort==5.9.3
+ipdb==0.13.9
