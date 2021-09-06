@@ -15,6 +15,7 @@ def get_active_admin(instance_data):
     return User.objects.create(is_active=True, is_staff=True, is_superuser=True, **instance_data)
 
 
+
 class BaseDrfTest:
     """
     All classes must extend from BaseDrfTest
@@ -22,6 +23,11 @@ class BaseDrfTest:
     setup() must be overwritten
     get_alt_data() must be customized as well
     """
+
+    def check_equal_data(self, original:dict, received:dict):
+        for key, value in original.items():
+            self.assertEqual(value, received[key])
+        return
 
     def get_admin_user(self, data: dict) -> User:
         return get_active_admin(data)
@@ -40,16 +46,15 @@ class BaseDrfTest:
         """
         Create the required variables
 
-        TO be overwritten in final Test class:
+        MUST override in implementation:
 
         self.requests = APIRequestFactory()
         self.endpoint = None
         self.factory = None
         self.model = None
         self.instance_data = {}
-        self.alt_data = {}
         self.view = None
         self.user_data = {}
         self.admin_data = {}
         """
-        pass
+        return NotImplementedError('You need to override BaseDrfTest.setUp()')

@@ -137,6 +137,7 @@ class CanCreate(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Assert instance exists on db
         self.assertTrue(self.model.objects.filter(id=response.data["id"]).exists())
+        self.check_equal_data(self.instance_data, response.data)
 
 
 class CanUpdate(BaseDrfTest):
@@ -153,10 +154,7 @@ class CanUpdate(BaseDrfTest):
         response = self.view(request, pk=instance.id)
         # Assert endpoint returns OK code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Assert instance has been modified
-        for key, value in self.instance_data.items():
-            self.assertEqual(response.data[key], value)
+        self.check_equal_data(self.instance_data, response.data)
 
 
 class CanDestroy(BaseDrfTest):

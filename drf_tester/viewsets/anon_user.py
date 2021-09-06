@@ -109,6 +109,8 @@ class CanCreate(BaseDrfTest):
         # Assert instance is created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(self.model.objects.get(id=response.data.instance.pk))
+        self.check_equal_data(self.instance_data, response.data)
+
 
 
 class CanUpdate(BaseDrfTest):
@@ -122,6 +124,7 @@ class CanUpdate(BaseDrfTest):
         response = self.view(request, pk=instance.pk)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_equal_data(self.instance_data, response.data)
 
 
 class CanDestroy(BaseDrfTest):
