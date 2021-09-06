@@ -59,5 +59,6 @@ class BaseDrfTest:
         self.view = None
         self.user_data = {}
         self.admin_data = {}
+        self.USER_FIELD_NAME = 'creator'
         """
         return NotImplementedError("You need to override BaseDrfTest.setUp()")
