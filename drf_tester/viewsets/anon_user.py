@@ -18,7 +18,7 @@ class NoList(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class NoDetails(BaseDrfTest):
+class NoRetrieve(BaseDrfTest):
     def test_anon_user_cannot_get_existing_instance(self):
         """Anonymous user cannot get details on existing instance"""
         # Create instance
@@ -143,7 +143,7 @@ class CanDestroy(BaseDrfTest):
 # Extended classes
 
 
-class AnonNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AnonNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """

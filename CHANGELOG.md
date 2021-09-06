@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Create classes for testing acces to instances linked to user
+- Create generalized methods to check fields in responses
+- Figure out why anon user cannot create ot modify instances
+
 
 ## 2012-09-02
 ### Added
-- New BsseDrfTest with setup and helper functions
+- New BaseDrfTest with setup and helper functions
 - New per action classes
 

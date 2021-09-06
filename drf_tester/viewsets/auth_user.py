@@ -21,7 +21,7 @@ class NoList(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class NoDetails(BaseDrfTest):
+class NoRetrieve(BaseDrfTest):
     def test_auth_user_cannot_get_existing_instance(self):
         """Authenticated user cannot get details on existing instance"""
         # get user
@@ -108,7 +108,7 @@ class CanList(BaseDrfTest):
         self.assertEqual(len(instances), len(response.data))
 
 
-class CanDetail(BaseDrfTest):
+class CanRetrieve(BaseDrfTest):
     def test_auth_user_can_get_instance(self):
         """Authenticated user can list instance"""
         # get user
@@ -205,7 +205,7 @@ class CanPaginate(BaseDrfTest):
 # EXTENDED CLASSES
 
 
-class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AuthFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Authenticated user has full access to endopint
     """
@@ -213,7 +213,7 @@ class AuthFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
     ...
 
 
-class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AuthNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has no access to endopint
     """
@@ -221,7 +221,7 @@ class AuthNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
     ...
 
 
-class AuthReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AuthReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has only read access to endopint
     """

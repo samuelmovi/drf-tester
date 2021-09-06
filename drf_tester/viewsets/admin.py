@@ -20,7 +20,7 @@ class NoList(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class NoDetails(BaseDrfTest):
+class NoRetrieve(BaseDrfTest):
     def test_admin_user_cannot_get_existing_instance(self):
         """Admin user cannot get details on existing instance"""
         # get admin user
@@ -204,7 +204,7 @@ class CanPaginate(BaseDrfTest):
 # Extended classes
 
 
-class AdminNoAccess(NoList, NoDetails, NoCreate, NoUpdate, NoDestroy):
+class AdminNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has no access to endopint
     """
