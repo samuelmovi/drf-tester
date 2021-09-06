@@ -1,8 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from .models import Thing
-from .serializers import ThingSerializer
+from .models import Thing, Property
+from .serializers import ThingSerializer, PropertySerializer
+from example_one.permissions import CreatorOnly
 
 # Create your views here.
 
@@ -31,4 +32,15 @@ class ThingViewSet3(viewsets.ModelViewSet):
     serializer_class = ThingSerializer
     permission_classes = [
         AllowAny,
+    ]
+
+# PROPERTY VIEWSETS
+
+class PropertyViewSet(viewsets.ModelViewSet):
+
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [
+        IsAuthenticated,
+        CreatorOnly,
     ]

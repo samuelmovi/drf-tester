@@ -352,3 +352,11 @@ class AuthReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
 
     pass
+
+
+class AuthOwner(CanListOwned, CanRetrieveOwned, CanCreate, CanUpdateOwned, CanDestroyOwned):
+    """
+    Authenticated user can access intances owned by user
+    """
+
+    pass

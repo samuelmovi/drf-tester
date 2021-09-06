@@ -5,7 +5,7 @@ from rest_framework.test import APIRequestFactory, APITestCase
 
 from drf_tester.viewsets.admin import AdminFullAccess
 from drf_tester.viewsets.anon_user import AnonFullAccess, AnonNoAccess, AnonReadOnly
-from drf_tester.viewsets.auth_user import AuthFullAccess
+from drf_tester.viewsets.auth_user import AuthFullAccess, AuthOwner
 
 from . import factories, models, views
 
@@ -43,7 +43,6 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         self.factory = factories.ThingFactory
         self.model = models.Thing
         self.view = views.ThingViewSet.as_view({"get": "list", "post": "create", "put": "update", "delete": "destroy"})
-        self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
         self.instance_data = INSTANCE_DATA
@@ -66,7 +65,6 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
         self.view = views.ThingViewSet2.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
         self.instance_data = INSTANCE_DATA
@@ -89,9 +87,29 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.view = views.ThingViewSet3.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
         self.instance_data = INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
+
+
+class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess):
+
+    def setUp(self):
+        """Tests setup"""
+        self.requests = APIRequestFactory()
+        self.endpoint = "/api/v1/property/"
+        self.factory = factories.PropertyFactory
+        self.model = models.Thing
+        self.view = views.PropertyViewSet.as_view(
+            {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
+        )
+        self.model = models.Thing
+        # instance data
+        self.instance_data = {
+            "name": "TEST property name",
+        }
+        self.user_data = USER_DATA
+        self.admin_data = ADMIN_DATA
+        self.USER_FIELD_NAME = 'creator'
