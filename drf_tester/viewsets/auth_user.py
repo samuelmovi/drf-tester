@@ -6,12 +6,11 @@ from ..utils import BaseDrfTest
 
 class NoList(BaseDrfTest):
     def test_auth_user_cannot_list_existing_instance(self):
-        """Authenticated user cannot get details on existing instance"""
+        """Authenticated user cannot list existing instances"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instance
         instances = self.get_model_instances()
-
         # Query endpoint
         request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=user)
@@ -27,7 +26,6 @@ class NoRetrieve(BaseDrfTest):
         user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=user)
@@ -56,7 +54,6 @@ class NoUpdate(BaseDrfTest):
         user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.put(self.endpoint, data={})
         force_authenticate(request, user=user)
@@ -72,16 +69,14 @@ class NoDestroy(BaseDrfTest):
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.delete(self.endpoint)
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
-
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Assert instance still exists on db
-        self.assertTrue(self.model.objects.get(id=instance.pk))
+        self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
 
 class CanList(BaseDrfTest):
@@ -91,27 +86,23 @@ class CanList(BaseDrfTest):
         user = self.get_active_user(self.user_data)
         # Create instances
         instances = self.get_model_instances()
-
         # Request list
         request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
         response = self.view(request)
-
         # Assert access is allowed
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         # Assert all instances are returned
         self.assertEqual(len(instances), len(response.data))
 
 
 class CanRetrieve(BaseDrfTest):
     def test_auth_user_can_get_instance(self):
-        """Authenticated user can list instance"""
+        """Authenticated user can get existing instance"""
         # get user
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
-
         # Request list
         request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
@@ -143,7 +134,6 @@ class CanUpdate(BaseDrfTest):
         user = self.get_active_user(self.user_data)
         # Create instances
         instance = self.factory()
-
         # Query endpoint
         request = self.requests.put(self.endpoint, self.instance_data)
         force_authenticate(request, user=user)

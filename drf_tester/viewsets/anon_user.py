@@ -60,7 +60,7 @@ class NoDestroy(BaseDrfTest):
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # Assert instance still exists on db
-        self.assertTrue(self.model.objects.get(id=instance.pk))
+        self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
 
 class CanList(BaseDrfTest):
