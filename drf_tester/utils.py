@@ -15,7 +15,6 @@ def get_active_admin(instance_data):
     return User.objects.create(is_active=True, is_staff=True, is_superuser=True, **instance_data)
 
 
-
 class BaseDrfTest:
     """
     All classes must extend from BaseDrfTest
@@ -24,7 +23,7 @@ class BaseDrfTest:
     get_alt_data() must be customized as well
     """
 
-    def check_equal_data(self, original:dict, received:dict):
+    def check_equal_data(self, original: dict, received: dict):
         for key, value in original.items():
             self.assertEqual(value, received[key])
         return
@@ -57,4 +56,4 @@ class BaseDrfTest:
         self.user_data = {}
         self.admin_data = {}
         """
-        return NotImplementedError('You need to override BaseDrfTest.setUp()')
+        return NotImplementedError("You need to override BaseDrfTest.setUp()")

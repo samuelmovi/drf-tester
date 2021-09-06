@@ -192,6 +192,7 @@ class AuthFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Authenticated user has full access to endopint
     """
+
     pass
 
 
@@ -199,6 +200,7 @@ class AuthNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has no access to endopint
     """
+
     pass
 
 
@@ -206,4 +208,5 @@ class AuthReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Authenticated user has only read access to endopint
     """
+
     pass

@@ -1,11 +1,10 @@
-
 import datetime
 from decimal import Decimal
 
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from drf_tester.viewsets.admin import AdminFullAccess
-from drf_tester.viewsets.anon_user import AnonNoAccess, AnonReadOnly, AnonFullAccess
+from drf_tester.viewsets.anon_user import AnonFullAccess, AnonNoAccess, AnonReadOnly
 from drf_tester.viewsets.auth_user import AuthFullAccess
 
 from . import factories, models, views
@@ -26,8 +25,8 @@ ADMIN_DATA = {
 INSTANCE_DATA = {
     "name": "test thing name",
     "number": 5,
-    "decimal_number": '1234.56',
-    "timestamp": datetime.datetime.now().isoformat()
+    "decimal_number": "1234.56",
+    "timestamp": datetime.datetime.now().isoformat(),
 }
 
 
@@ -43,9 +42,7 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         self.endpoint = "/api/v1/things/is_authenticated/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
-        self.view = views.ThingViewSet.as_view(
-            {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
-        )
+        self.view = views.ThingViewSet.as_view({"get": "list", "post": "create", "put": "update", "delete": "destroy"})
         self.endpoint = "/api/v1/things/"
         self.model = models.Thing
         # instance data
@@ -98,4 +95,3 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.instance_data = INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
-

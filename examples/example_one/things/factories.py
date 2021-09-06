@@ -1,12 +1,13 @@
 import datetime
 
 from factory.django import DjangoModelFactory
-from factory.fuzzy import FuzzyText, FuzzyInteger, FuzzyDecimal
+from factory.fuzzy import FuzzyDecimal, FuzzyInteger, FuzzyText
 from faker import Faker
 
 from .models import Thing
 
 fake = Faker()
+
 
 class ThingFactory(DjangoModelFactory):
 

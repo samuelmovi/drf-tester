@@ -97,7 +97,7 @@ class CanCreate(BaseDrfTest):
         response = self.view(request)
         # Assert instance is created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(self.model.objects.get(id=response.data.get('id')))
+        self.assertTrue(self.model.objects.get(id=response.data.get("id")))
         self.check_equal_data(self.instance_data, response.data)
 
 
@@ -135,6 +135,7 @@ class AnonNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has no access to endopint
     """
+
     pass
 
 
@@ -142,6 +143,7 @@ class AnonReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
+
     pass
 
 
@@ -149,4 +151,5 @@ class AnonFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """
+
     pass
