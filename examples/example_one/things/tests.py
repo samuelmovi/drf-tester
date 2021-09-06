@@ -42,7 +42,6 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
         self.factory = factories.ThingFactory
         self.model = models.Thing
         self.view = views.ThingViewSet.as_view({"get": "list", "post": "create", "put": "update", "delete": "destroy"})
-        # instance data
         self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
@@ -63,7 +62,6 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
         self.view = views.ThingViewSet2.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # instance data
         self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
@@ -84,7 +82,6 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.view = views.ThingViewSet3.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # instance data
         self.instance_data = THING_INSTANCE_DATA
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
@@ -105,7 +102,6 @@ class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess)
         self.view = views.PropertyViewSet.as_view(
             {"get": "list", "post": "create", "put": "update", "delete": "destroy"}
         )
-        # instance data
         self.instance_data = {
             "name": "TEST property name",
         }

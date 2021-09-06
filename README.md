@@ -29,9 +29,34 @@ To create a `TestCase` class to test a DRF endpoint:
 - Fillup the `setUp()` method with all the required variables
 
 
+### Example
+
+Included in the repository, there's an example illustrating how to implement in your project.
+
+To test a fully open endpoint:
+
+```python
+class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAccess):
+    """
+    Thing viewset tests
+    Permission level: IsAuthenticated
+    """
+
+    def setUp(self):
+        """Tests setup"""
+        self.requests = APIRequestFactory()
+        self.endpoint = "/api/v1/things/"
+        self.factory = factories.ThingFactory
+        self.model = models.Thing
+        self.view = views.ThingViewSet.as_view({"get": "list", "post": "create", "put": "update", "delete": "destroy"})
+        self.instance_data = {...}
+        self.user_data = {...}
+        self.admin_data = {...}
+```
+
 ## Viewset Tests
 
-Code:
+The code is separated depending on the user making the request:
 
 ```
 drf_tester/viewsets/
@@ -42,14 +67,32 @@ drf_tester/viewsets/
 
 ```
 
-They are separated in relation to the user querying the endpoing, and the action to be performed.
+Within each file, there are classes that test the effects of every single action on the endpoint
 
-On each file we have classes covering every action, and some extended classes with convenient groupings of the more basic classes
+These single-action classes are grouped in major classes meant to be inherited by the final test case.
 
+For `AnonymousUser`:
 
+- `AnonNoAccess`
+- `AnonReadOnly`
+- `AnonFullAccess`
+
+For authenticate users:
+
+- `AuthFullAccess`
+- `AuthNoAccess`
+- `AuthReadOnly`
+- `AuthOwner`
+
+For admin users:
+
+- `AdminNoAccess`
+- `AdminReadOnly`
+- `AdminFullAccess`
+
+You need to mix and match classes according with the level of access expected from each endpoint.
 
 ## Installing
-
 
 Globally:
 
