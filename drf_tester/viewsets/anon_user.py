@@ -86,7 +86,7 @@ class CanList(BaseDrfTest):
         self.assertEquals(len(expected_instances), len(response.data))
 
 
-class CanDetail(BaseDrfTest):
+class CanRetrieve(BaseDrfTest):
     def test_anon_user_can_get_instances(self):
         """Anonymous user can list instances"""
         # create instances
@@ -151,7 +151,7 @@ class AnonNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     ...
 
 
-class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AnonReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Anonymous user has only read access to endopint
     """
@@ -159,7 +159,7 @@ class AnonReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     ...
 
 
-class AnonFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AnonFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Anonymous user has full access to endopint
     """

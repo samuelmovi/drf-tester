@@ -107,7 +107,7 @@ class CanList(BaseDrfTest):
         self.assertEqual(len(instances), len(response.data))
 
 
-class CanDetail(BaseDrfTest):
+class CanRetrieve(BaseDrfTest):
     def test_admin_user_can_get_instance(self):
         """Admin user can list instance"""
         # get admin user
@@ -212,7 +212,7 @@ class AdminNoAccess(NoList, NoRetrieve, NoCreate, NoUpdate, NoDestroy):
     ...
 
 
-class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
+class AdminReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     """
     Admin user has only read access to endopint
     """
@@ -220,7 +220,7 @@ class AdminReadOnly(CanList, CanDetail, NoCreate, NoUpdate, NoDestroy):
     ...
 
 
-class AdminFullAccess(CanList, CanDetail, CanCreate, CanUpdate, CanDestroy):
+class AdminFullAccess(CanList, CanRetrieve, CanCreate, CanUpdate, CanDestroy):
     """
     Admin user has full access to endopint
     """
