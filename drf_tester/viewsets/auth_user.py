@@ -234,6 +234,24 @@ class CanCreate(BaseDrfTest):
         self.check_equal_data(self.instance_data, response.data)
 
 
+class CanCreateOwned(BaseDrfTest):
+    def test_auth_user_can_create_owned_instance(self):
+        """Authenticated user can create new owned instance"""
+        # get user
+        user = self.get_active_user(self.user_data)
+        # add as owner
+        self.instance_data[self.USER_FIELD_NAME] = user.id
+        # Query endpoint
+        request = self.requests.post(self.endpoint, data=self.instance_data)
+        force_authenticate(request, user=user)
+        response = self.view(request)
+        # Assert endpoint returns created status
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Assert instance exists on db
+        self.assertTrue(self.model.objects.filter(id=response.data["id"]).exists())
+        self.check_equal_data(self.instance_data, response.data)
+
+
 class CanUpdate(BaseDrfTest):
     def test_auth_user_can_modify_instance(self):
         """Authenticated user can modify existing instance"""
@@ -354,7 +372,7 @@ class AuthReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
     pass
 
 
-class AuthOwner(CanListOwned, CanRetrieveOwned, CanCreate, CanUpdateOwned, CanDestroyOwned):
+class AuthOwner(CanListOwned, CanRetrieveOwned, CanCreateOwned, CanUpdateOwned, CanDestroyOwned):
     """
     Authenticated user can access intances owned by user
     """
