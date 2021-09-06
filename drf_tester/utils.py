@@ -17,11 +17,13 @@ def get_active_admin(instance_data):
 
 class BaseDrfTest:
     """
-    All classes must extend from BaseDrfTest
+    All Test classes must extend BaseDrfTest
 
-    setup() must be overwritten
-    get_alt_data() must be customized as well
+    - setUp() must be overridden
     """
+
+    MIN = 5
+    MAX= 10
 
     def check_equal_data(self, original: dict, received: dict):
         for key, value in original.items():
@@ -36,10 +38,10 @@ class BaseDrfTest:
 
     def get_model_instances(self) -> list:
         """
-        Use provided factory to create a random amount of instances
+        Use provided factory to create a random amount of instances, between
         Return list of those instances
         """
-        return [self.factory() for i in range(random.randint(1, 10))]
+        return [self.factory() for i in range(random.randint(self.MIN, self.MAX))]
 
     def setUp(self):
         """

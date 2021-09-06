@@ -6,6 +6,7 @@ This module aims to minimize the time of test development, and increase while pr
 ## Table of Contents
 
 - [Requirements](#requirements)
+- [How to Use](#how-to-use)
 - [Viewset Tests](#viewset-tests)
 - [Installing locally](#installing-locally)
 
@@ -15,12 +16,23 @@ This module aims to minimize the time of test development, and increase while pr
 - DjagnoRESTFramework >= 3.12.2
 
 
+## How To Use
+
+
+To create a `TestCase` class to test a DRF endpoint:
+
+- Extend `APITestCase`
+- Import and the add `drf_tester` classes that your class requires
+- Fillup the `setUp()` method with all the required variables
+
+
 ## Viewset Tests
 
 Code:
 
 ```
 drf_tester/viewsets/
+                utils.py
                 /admin.py
                 /auth_user.py
                 /anon_user.py
@@ -35,9 +47,9 @@ On each file we have classes covering every action, and some extended classes wi
 
 ## Installing Locally
 
-To install the package locally: 
+To install the package locally:
 
 ```bash
-pip install .
+pip install -e .
 ```
 
