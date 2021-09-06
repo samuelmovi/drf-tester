@@ -1,7 +1,10 @@
 # DRF Tester
 
-This module aims to minimize the time of test development, and increase while productivity, while guaranteeing an equal thoroughness of tests when developing REST APIs with `DjangoRestFramework`
+This module aims to help developers with testing `DjangoRestFramework` API endpoints:
 
+- Minimize the time (and lines of code) required
+- Mantain consistent testing coverage
+- Increase productivity!
 
 ## Table of Contents
 
@@ -45,9 +48,16 @@ On each file we have classes covering every action, and some extended classes wi
 
 
 
-## Installing Locally
+## Installing
 
-To install the package locally:
+
+Globally:
+
+```bash
+pip install drf-tester
+```
+
+Locally:
 
 ```bash
 pip install -e .
