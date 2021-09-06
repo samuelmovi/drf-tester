@@ -13,8 +13,7 @@ class NoList(BaseDrfTest):
         instances = self.get_model_instances()
 
         # Query endpoint
-        url = f"{self.endpoint}"
-        request = self.requests.get(url, data={})
+        request = self.requests.get(self.endpoint, data={})
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
@@ -59,10 +58,9 @@ class NoUpdate(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = f"{self.endpoint}{instance.pk}/"
-        request = self.requests.put(url, data={})
+        request = self.requests.put(self.endpoint, data={})
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -76,10 +74,9 @@ class NoDestroy(BaseDrfTest):
         instance = self.factory()
 
         # Query endpoint
-        url = self.endpoint + f"{instance.pk}/"
-        request = self.requests.delete(url)
+        request = self.requests.delete(self.endpoint)
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, pk=instance.id)
 
         # Assert access forbidden
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

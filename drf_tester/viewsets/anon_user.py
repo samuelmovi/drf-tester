@@ -9,8 +9,7 @@ class NoList(BaseDrfTest):
         # Create instance
         instances = self.get_model_instances()
         # Query endpoint
-        url = f"{self.endpoint}"
-        request = self.requests.get(url, data={})
+        request = self.requests.get(self.endpoint, data={})
         response = self.view(request)
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
