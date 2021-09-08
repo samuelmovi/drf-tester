@@ -5,13 +5,39 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+def create_user(instance_data:dict) -> User:
+    """
+    Create and return an instance of the user model
+    """
+    return User.objects.create(**instance_data)
 
-def get_active_user(instance_data):
-    return User.objects.create(is_active=True, **instance_data)
+
+def get_active_user(instance_data:dict) -> User:
+    """
+    Return an active instance of user
+    """
+    instance_data['is_active'] = True
+    return create_user(instance_data)
 
 
-def get_active_admin(instance_data):
-    return User.objects.create(is_active=True, is_staff=True, is_superuser=True, **instance_data)
+def get_active_admin(instance_data) -> User:
+    """
+    Return an active instance of admin user
+    """
+    instance_data['is_superuser'] = True
+    instance_data['is_active'] = True
+
+    return create_user(instance_data)
+
+
+def get_active_staff(instance_data:dict) -> User:
+    """
+    Return an active instance of admin user
+    """
+    instance_data['is_admin'] = True
+    instance_data['is_staff'] = True
+
+    return create_user(instance_data)
 
 
 class BaseDrfTest:
@@ -21,6 +47,7 @@ class BaseDrfTest:
     - setUp() must be overridden
     """
 
+    # Customize for desired random range of instances
     MIN = 5
     MAX= 10
 
@@ -35,10 +62,14 @@ class BaseDrfTest:
     def get_active_user(self, data: dict) -> User:
         return get_active_user(data)
 
+    def get_active_staff(self, data: dict) -> User:
+        return get_active_staff(data)
+
     def get_model_instances(self, amount:int=None) -> list:
         """
-        Use provided factory to create a random amount of instances, or exact amount if provided
-        Return list of those instances
+        Return list of model instances:
+        - Exact size if amount passed
+        - Random size between MIN and MAX (customizable)
         """
         if amount:
             return [self.factory() for i in range(amount)]
@@ -56,9 +87,10 @@ class BaseDrfTest:
         self.factory = None
         self.model = None
         self.instance_data = {}
-        self.view = None
-        self.user_data = {}
-        self.admin_data = {}
-        self.USER_FIELD_NAME = 'creator'
+        self.view = viewsets.YourViewSet
+        self.user_data = {}     # Required for authenticated user testing
+        self.admin_data = {}    # Required for super user testing
+        self.staff_data = {}    # Required for staff user testing
+        self.USER_FIELD_NAME = 'creator'    # Required for testing user object access
         """
         return NotImplementedError("You need to override BaseDrfTest.setUp()")
