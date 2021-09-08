@@ -29,8 +29,8 @@ def get_active_admin(instance_data) -> User:
     """
     Return an active instance of admin user
     """
-    instance_data['is_superuser'] = True
     instance_data['is_active'] = True
+    instance_data['is_superuser'] = True
 
     return create_user(instance_data)
 
@@ -39,7 +39,7 @@ def get_active_staff(instance_data:dict) -> User:
     """
     Return an active instance of admin user
     """
-    instance_data['is_admin'] = True
+    instance_data['is_active'] = True
     instance_data['is_staff'] = True
 
     return create_user(instance_data)

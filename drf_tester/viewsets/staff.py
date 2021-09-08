@@ -20,7 +20,7 @@ class NoList(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoListOwned(BaseDrfTest):
@@ -38,7 +38,7 @@ class NoListOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoRetrieve(BaseDrfTest):
@@ -53,7 +53,7 @@ class NoRetrieve(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoRetrieveOwned(BaseDrfTest):
@@ -70,7 +70,7 @@ class NoRetrieveOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 class NoCreate(BaseDrfTest):
     def test_staff_user_cannot_create_instance(self):
@@ -82,7 +82,7 @@ class NoCreate(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert access is forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoUpdate(BaseDrfTest):
@@ -97,7 +97,7 @@ class NoUpdate(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoUpdateOwned(BaseDrfTest):
@@ -114,7 +114,7 @@ class NoUpdateOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoDestroy(BaseDrfTest):
@@ -129,7 +129,7 @@ class NoDestroy(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # Assert instance still exists on db
         self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
@@ -148,7 +148,7 @@ class NoDestroyOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # Assert instance still exists on db
         self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
