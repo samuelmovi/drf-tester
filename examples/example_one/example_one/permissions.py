@@ -20,3 +20,14 @@ class CreatorPermission(BasePermission):
             return True
         else:
             return False
+
+    def has_permission(self, request, view):
+
+        if request.user.is_staff and request.method in SAFE_METHODS:
+            # safe access to staff
+            return True
+        elif request.user.is_authenticated and not request.user.is_staff:
+            # staff cannot create instances
+            return True
+        else:
+            return False
