@@ -1,3 +1,7 @@
+"""
+Collection of classes to be used in the testing of access to a Viewset by an ANONYMOUS user
+
+"""
 from rest_framework import status
 
 from ..utils import BaseDrfTest

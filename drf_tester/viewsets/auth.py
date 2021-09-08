@@ -1,3 +1,7 @@
+"""
+Collection of classes to be used in the testing of access to a Viewset by an AUTHENTICATED user
+
+"""
 from rest_framework import status
 from rest_framework.test import force_authenticate
 

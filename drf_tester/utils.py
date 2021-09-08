@@ -1,9 +1,14 @@
+"""
+Collection of functions to be used by other tests in module
+
+"""
 import random
 
 from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
+
 
 def create_user(instance_data:dict) -> User:
     """
