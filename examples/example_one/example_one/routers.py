@@ -11,4 +11,3 @@ router.register("things/auth_or_readonly/", thing_views.ThingViewSet3, basename=
 router.register("things/allow_any/", thing_views.ThingViewSet3, basename="things-allow-any")
 
 router.register("property/", thing_views.PropertyViewSet, basename="property")
-

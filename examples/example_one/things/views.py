@@ -1,9 +1,9 @@
+from example_one.permissions import CreatorPermission
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from .models import Thing, Property
-from .serializers import ThingSerializer, PropertySerializer
-from example_one.permissions import CreatorPermission
+from .models import Property, Thing
+from .serializers import PropertySerializer, ThingSerializer
 
 # Create your views here.
 
@@ -34,7 +34,9 @@ class ThingViewSet3(viewsets.ModelViewSet):
         AllowAny,
     ]
 
+
 # PROPERTY VIEWSETS
+
 
 class PropertyViewSet(viewsets.ModelViewSet):
 

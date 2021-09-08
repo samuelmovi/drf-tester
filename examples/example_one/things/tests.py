@@ -108,4 +108,4 @@ class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess,
         }
         self.user_data = USER_DATA
         self.admin_data = ADMIN_DATA
-        self.USER_FIELD_NAME = 'creator'
+        self.USER_FIELD_NAME = "creator"

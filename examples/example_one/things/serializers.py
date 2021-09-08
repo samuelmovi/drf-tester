@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Thing, Property
+from .models import Property, Thing
 
 
 class ThingSerializer(serializers.ModelSerializer):
