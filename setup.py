@@ -9,6 +9,8 @@ setup(
     author_email='samuel.software.developer@email.com',
     license='MIT',
     packages=['drf_tester',],
-    zip_safe=False
+    install_requires=["Django", "djangorestframework"],
+    zip_safe=False,
+    include_package_data=True,
 )
 
