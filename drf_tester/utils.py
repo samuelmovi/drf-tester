@@ -25,7 +25,7 @@ def get_active_user(instance_data:dict) -> User:
     return create_user(instance_data)
 
 
-def get_active_admin(instance_data) -> User:
+def get_active_admin(instance_data:dict) -> User:
     """
     Return an active instance of admin user
     """
@@ -52,9 +52,11 @@ class BaseDrfTest:
     - setUp() must be overridden
     """
 
-    # Customize for desired random range of instances
+    # Customize for desired range of random instances
     MIN = 5
     MAX= 10
+    # set to integer value if random instance amounts are not desired
+    EXACT_AMOUNT = None
 
     def check_equal_data(self, original: dict, received: dict):
         for key, value in original.items():
@@ -70,14 +72,14 @@ class BaseDrfTest:
     def get_active_staff(self, data: dict) -> User:
         return get_active_staff(data)
 
-    def get_model_instances(self, amount:int=None) -> list:
+    def get_model_instances(self) -> list:
         """
         Return list of model instances:
-        - Exact size if amount passed
+        - Exact size if self.EXACT_AMOUNT is not null
         - Random size between MIN and MAX (customizable)
         """
-        if amount:
-            return [self.factory() for i in range(amount)]
+        if self.EXACT_AMOUNT:
+            return [self.factory() for i in range(self.EXACT_AMOUNT)]
         else:
             return [self.factory() for i in range(random.randint(self.MIN, self.MAX))]
 
@@ -85,7 +87,7 @@ class BaseDrfTest:
         """
         Create the required variables
 
-        MUST override in implementation:
+        Override in implementation for correct operation:
 
         self.requests = APIRequestFactory()
         self.endpoint = None
