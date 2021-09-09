@@ -187,4 +187,10 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
 
 ## Contributions
 
-Contributions are welcome
+I would love for the project to cover as many use-cases as possible, and for that I need your help.
+
+There will always be some customized endpoint functionality that will never be covered by this module, but I'd like to make it as extensive as reasonably possible.
+
+If you know of any situations for which the current solution won't work, please let me know and I'll try to make allowances for it.
+
+Check out [CONTRIBUTING.md](contributing.md) for more details.
