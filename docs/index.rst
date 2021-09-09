@@ -39,6 +39,9 @@ To install `drf-tester` in your systems, use pip:
     pip install drf-tester
 
 
+Table of Contents
+-----------------
+
 .. toctree::
    :maxdepth: 2
 
