@@ -34,7 +34,7 @@ Installation
 
 To install `drf-tester` in your systems, use pip:
 
-.. code-block::bash
+.. code-block:: bash
 
     pip install drf-tester
 
@@ -46,9 +46,3 @@ To install `drf-tester` in your systems, use pip:
    viewset-tests
    example
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

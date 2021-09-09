@@ -14,6 +14,7 @@ The philosophy behind the design of this module, is that a developer should only
 
 This saves us developers lots of time writing repetitive, boiler-plate code, while reassuring that our tests are, at the very least, consistent.
 
+For more details, [read the docs](https://drf-tester.readthedocs.io/en/latest/)
 
 ## Table of Contents
 
@@ -36,7 +37,9 @@ This saves us developers lots of time writing repetitive, boiler-plate code, whi
 To install `drf-tester` in your systems, use pip:
 
 ```bash
+
 pip install drf-tester
+
 ```
 
 
