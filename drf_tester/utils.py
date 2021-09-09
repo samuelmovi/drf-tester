@@ -6,41 +6,40 @@ import random
 
 from django.contrib.auth import get_user_model
 
-
 User = get_user_model()
 
 
-def create_user(instance_data:dict) -> User:
+def create_user(instance_data: dict) -> User:
     """
     Create and return an instance of the user model
     """
     return User.objects.create(**instance_data)
 
 
-def get_active_user(instance_data:dict) -> User:
+def get_active_user(instance_data: dict) -> User:
     """
     Return an active instance of user
     """
-    instance_data['is_active'] = True
+    instance_data["is_active"] = True
     return create_user(instance_data)
 
 
-def get_active_admin(instance_data:dict) -> User:
+def get_active_admin(instance_data: dict) -> User:
     """
     Return an active instance of admin user
     """
-    instance_data['is_active'] = True
-    instance_data['is_superuser'] = True
+    instance_data["is_active"] = True
+    instance_data["is_superuser"] = True
 
     return create_user(instance_data)
 
 
-def get_active_staff(instance_data:dict) -> User:
+def get_active_staff(instance_data: dict) -> User:
     """
     Return an active instance of admin user
     """
-    instance_data['is_active'] = True
-    instance_data['is_staff'] = True
+    instance_data["is_active"] = True
+    instance_data["is_staff"] = True
 
     return create_user(instance_data)
 
@@ -54,7 +53,7 @@ class BaseDrfTest:
 
     # Customize for desired range of random instances
     MIN = 5
-    MAX= 10
+    MAX = 10
     # set to integer value if random instance amounts are not desired
     EXACT_AMOUNT = None
 

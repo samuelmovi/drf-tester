@@ -72,6 +72,7 @@ class NoRetrieveOwned(BaseDrfTest):
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 class NoCreate(BaseDrfTest):
     def test_auth_user_cannot_create_instance(self):
         """Authenticated user cannot create new instance"""
