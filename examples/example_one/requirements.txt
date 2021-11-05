@@ -4,4 +4,5 @@ djangorestframework-simplejwt==4.6.0
 factory-boy==3.1.0
 django-filter==2.4.0
 django-cors-headers==3.5.0
+drf-tester==0.1.1
 ipdb==0.13.4

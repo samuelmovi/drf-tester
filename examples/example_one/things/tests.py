@@ -38,7 +38,6 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
 
     def setUp(self):
         """Tests setup"""
-        self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/things/is_authenticated/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
@@ -56,7 +55,6 @@ class ThingViewSet2Test(APITestCase, AnonReadOnly, AuthFullAccess, AdminFullAcce
 
     def setUp(self):
         """Tests setup"""
-        self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/things/auth_or_readonly/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
@@ -76,7 +74,6 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
 
     def setUp(self):
         """Tests setup"""
-        self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/things/allow_any/"
         self.factory = factories.ThingFactory
         self.model = models.Thing
@@ -96,7 +93,6 @@ class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess,
 
     def setUp(self):
         """Tests setup"""
-        self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/property/"
         self.factory = factories.PropertyFactory
         self.model = models.Property

@@ -72,7 +72,6 @@ Some Object-level variables are declared outside of `setUp` for convenience.
 The variables required for correct operation:
 
 ```python
-self.requests = APIRequestFactory()
 self.endpoint = None    # string with the url of the endpoint
 self.factory = None     # factory-boy class to create model instances
 self.model = None       # the model accessed through the endpoint
@@ -177,7 +176,6 @@ class ThingViewSetTest(APITestCase, AnonNoAccess, AuthFullAccess, AdminFullAcces
 
     def setUp(self):
         """Tests setup"""
-        self.requests = APIRequestFactory()
         self.endpoint = "/api/v1/things/"
         self.factory = factories.ThingFactory
         self.model = models.Thing

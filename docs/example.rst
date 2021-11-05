@@ -15,7 +15,6 @@ From ``example_one``:
 
         def setUp(self):
             """Tests setup"""
-            self.requests = APIRequestFactory()
             self.endpoint = "/api/v1/things/"
             self.factory = factories.ThingFactory
             self.model = models.Thing

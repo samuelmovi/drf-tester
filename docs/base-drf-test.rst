@@ -32,7 +32,6 @@ The variables required for correct operation:
 
 .. code-block:: python
 
-    self.requests = APIRequestFactory()
     self.endpoint = None    # string with the url of the endpoint
     self.factory = None     # factory-boy class to create model instances
     self.model = None       # the model accessed through the endpoint

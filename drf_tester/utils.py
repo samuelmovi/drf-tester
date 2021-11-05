@@ -5,6 +5,8 @@ Collection of functions to be used by other tests in module
 import random
 
 from django.contrib.auth import get_user_model
+from rest_framework.test import APIRequestFactory
+
 
 User = get_user_model()
 
@@ -56,6 +58,7 @@ class BaseDrfTest:
     MAX = 10
     # set to integer value if random instance amounts are not desired
     EXACT_AMOUNT = None
+    requests = APIRequestFactory()
 
     def check_equal_data(self, original: dict, received: dict):
         for key, value in original.items():
@@ -88,7 +91,6 @@ class BaseDrfTest:
 
         Override in implementation for correct operation:
 
-        self.requests = APIRequestFactory()
         self.endpoint = None
         self.factory = None
         self.model = None
