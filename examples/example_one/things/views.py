@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
 
 from example_one.permissions import CreatorPermission
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from .models import Property, Thing
@@ -48,10 +49,16 @@ class PropertyViewSet(viewsets.ModelViewSet):
     model = Property
     serializer_class = PropertySerializer
     permission_classes = [
+        IsAuthenticated,
         CreatorPermission,
     ]
 
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
     def get_queryset(self):
+        """Return all instances for admin and staff, filter auth user by creator field.
+        """
         if self.request.user.is_authenticated and (self.request.user.is_superuser or self.request.user.is_staff):
             qs = self.model.objects.all()
         else:
@@ -59,6 +66,8 @@ class PropertyViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_object(self):
-        obj = get_object_or_404(self.model.objects.all(), pk=self.kwargs["pk"])
+        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        import ipdb; ipdb.set_trace()
         self.check_object_permissions(self.request, obj)
         return obj
+

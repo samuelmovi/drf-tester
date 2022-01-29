@@ -85,7 +85,7 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.admin_data = ADMIN_DATA
 
 
-class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess, StaffReadOnly, OtherOwner):
+class PropertyViewSetTest(APITestCase, OtherOwner):
     """
     Auth Only.
     Update and delete require user==instance.creator

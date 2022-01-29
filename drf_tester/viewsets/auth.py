@@ -8,6 +8,21 @@ from rest_framework.test import force_authenticate
 from ..utils import BaseDrfTest
 
 
+# DISALLOWED BEHAVIOUR
+
+class NoCreate(BaseDrfTest):
+    def test_auth_user_cannot_create_instance(self):
+        """Authenticated user cannot create new instance"""
+        # get user
+        user = self.get_active_user(self.user_data)
+        # Query endpoint
+        request = self.requests.post(self.endpoint, data={})
+        force_authenticate(request, user=user)
+        response = self.view(request)
+        # Assert access is forbidden
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
 class NoList(BaseDrfTest):
     def test_auth_user_cannot_list_existing_instance(self):
         """Authenticated user cannot list existing instances"""
@@ -20,7 +35,7 @@ class NoList(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoListOwned(BaseDrfTest):
@@ -40,22 +55,25 @@ class NoListOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
 
 class NoRetrieve(BaseDrfTest):
     def test_auth_user_cannot_get_existing_instance(self):
-        """Authenticated user cannot get details on existing instance"""
+        """Authenticated user cannot get details on existing instance.
+        Receives 404 HTTP message
+        """
         # get user
         user = self.get_active_user(self.user_data)
         # Create instance
         instance = self.factory()
         # Query endpoint
-        request = self.requests.get(self.endpoint, data={})
+        request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class NoRetrieveOwned(BaseDrfTest):
@@ -64,32 +82,16 @@ class NoRetrieveOwned(BaseDrfTest):
         # create some user
         some_user = self.user_factory()
         # Create instance
-        instance = self.factory()
-        setattr(instance, self.USER_FIELD_NAME, some_user)
-        instance.save()
+        instance = self.factory(creator=some_user)
         # get user
         user = self.get_active_user(self.user_data)
-        # create URL
-        url = f"{self.endpoint}{instance.id}"
         # Query endpoint
-        request = self.requests.get(url)
+        request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
-class NoCreate(BaseDrfTest):
-    def test_auth_user_cannot_create_instance(self):
-        """Authenticated user cannot create new instance"""
-        # get user
-        user = self.get_active_user(self.user_data)
-        # Query endpoint
-        request = self.requests.post(self.endpoint, data={})
-        force_authenticate(request, user=user)
-        response = self.view(request)
-        # Assert access is forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # import ipdb; ipdb.set_trace()
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class NoUpdate(BaseDrfTest):
@@ -104,7 +106,7 @@ class NoUpdate(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoUpdateOwned(BaseDrfTest):
@@ -123,7 +125,7 @@ class NoUpdateOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class NoDestroy(BaseDrfTest):
@@ -138,7 +140,7 @@ class NoDestroy(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # Assert instance still exists on db
         self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
@@ -158,10 +160,12 @@ class NoDestroyOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # Assert instance still exists on db
         self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
+
+# ALLOWED BEHAVIOUR
 
 class CanList(BaseDrfTest):
     def test_auth_user_can_list_instances(self):
@@ -250,11 +254,12 @@ class CanCreate(BaseDrfTest):
 
 class CanCreateOwned(BaseDrfTest):
     def test_auth_user_can_create_owned_instance(self):
-        """Authenticated user can create new owned instance"""
+        """Authenticated user can create new owned instance.
+
+        Requires endpoint to add authenticated user to object model.
+        """
         # get user
         user = self.get_active_user(self.user_data)
-        # add as owner
-        self.instance_data[self.USER_FIELD_NAME] = user.id
         # Query endpoint
         request = self.requests.post(self.endpoint, data=self.instance_data)
         force_authenticate(request, user=user)
@@ -263,6 +268,8 @@ class CanCreateOwned(BaseDrfTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Assert instance exists on db
         self.assertTrue(self.model.objects.filter(id=response.data["id"]).exists())
+        # assert owner properly set
+        self.assertEqual(response.data[self.USER_FIELD_NAME], user.id)
         self.check_equal_data(self.instance_data, response.data)
 
 
@@ -297,6 +304,7 @@ class CanUpdateOwned(BaseDrfTest):
         response = self.view(request, pk=instance.id)
         # Assert endpoint returns OK code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[self.USER_FIELD_NAME], user.id)
         self.check_equal_data(self.instance_data, response.data)
 
 
