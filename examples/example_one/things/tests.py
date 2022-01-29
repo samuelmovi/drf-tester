@@ -4,8 +4,9 @@ from rest_framework.test import APITestCase
 
 from drf_tester.viewsets.admin import AdminFullAccess
 from drf_tester.viewsets.anon import AnonFullAccess, AnonNoAccess, AnonReadOnly
-from drf_tester.viewsets.auth import AuthFullAccess, AuthOwner, OtherOwner
+from drf_tester.viewsets.auth import AuthFullAccess
 from drf_tester.viewsets.staff import StaffReadOnly
+from drf_tester.viewsets.owner import AuthOwner, OtherOwner
 
 from . import factories, models, views
 
@@ -85,7 +86,7 @@ class ThingViewSet3Test(APITestCase, AnonFullAccess, AuthFullAccess, AdminFullAc
         self.admin_data = ADMIN_DATA
 
 
-class PropertyViewSetTest(APITestCase, OtherOwner):
+class PropertyViewSetTest(APITestCase, AnonNoAccess, AuthOwner, AdminFullAccess, StaffReadOnly, OtherOwner):
     """
     Auth Only.
     Update and delete require user==instance.creator
