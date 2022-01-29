@@ -7,8 +7,8 @@ from rest_framework.test import force_authenticate
 
 from ..utils import BaseDrfTest
 
-
 # DISALLOWED BEHAVIOUR
+
 
 class NoCreate(BaseDrfTest):
     def test_auth_user_cannot_create_instance(self):
@@ -90,7 +90,6 @@ class NoRetrieveOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        # import ipdb; ipdb.set_trace()
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -166,6 +165,7 @@ class NoDestroyOwned(BaseDrfTest):
 
 
 # ALLOWED BEHAVIOUR
+
 
 class CanList(BaseDrfTest):
     def test_auth_user_can_list_instances(self):
