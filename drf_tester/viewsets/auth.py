@@ -25,16 +25,18 @@ class NoList(BaseDrfTest):
 
 class NoListOwned(BaseDrfTest):
     def test_auth_user_cannot_list_owned_instance(self):
-        """Authenticated user cannot list owned instances"""
-        # get user
-        user = self.get_active_user(self.user_data)
+        """Authenticated user cannot list instances owned by different user."""
+        # create some user
+        some_user = self.user_factory()
         # Create instance
         instances = self.get_model_instances()
         for x in instances:
-            setattr(x, self.USER_FIELD_NAME, user)
+            setattr(x, self.USER_FIELD_NAME, some_user)
             x.save()
+        # get user
+        user = self.get_active_user(self.user_data)
         # Query endpoint
-        request = self.requests.get(self.endpoint, data={})
+        request = self.requests.get(self.endpoint)
         force_authenticate(request, user=user)
         response = self.view(request)
         # Assert forbidden access
@@ -58,19 +60,23 @@ class NoRetrieve(BaseDrfTest):
 
 class NoRetrieveOwned(BaseDrfTest):
     def test_auth_user_cannot_get_owned_instance(self):
-        """Authenticated user cannot get details on own instance"""
-        # get user
-        user = self.get_active_user(self.user_data)
+        """Authenticated user cannot get details on other user's instance."""
+        # create some user
+        some_user = self.user_factory()
         # Create instance
         instance = self.factory()
-        setattr(instance, self.USER_FIELD_NAME, user)
+        setattr(instance, self.USER_FIELD_NAME, some_user)
         instance.save()
+        # get user
+        user = self.get_active_user(self.user_data)
+        # create URL
+        url = f"{self.endpoint}{instance.id}"
         # Query endpoint
-        request = self.requests.get(self.endpoint, data={})
+        request = self.requests.get(url)
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoCreate(BaseDrfTest):
@@ -103,19 +109,21 @@ class NoUpdate(BaseDrfTest):
 
 class NoUpdateOwned(BaseDrfTest):
     def test_auth_user_cannot_modify_owned_instance(self):
-        """Authenticated user cannot modify owned instance"""
-        # get user
-        user = self.get_active_user(self.user_data)
+        """Authenticated user cannot modify another user's instance."""
+        # create some user
+        some_user = self.user_factory()
         # Create instance
         instance = self.factory()
-        setattr(instance, self.USER_FIELD_NAME, user)
+        setattr(instance, self.USER_FIELD_NAME, some_user)
         instance.save()
+        # get user
+        user = self.get_active_user(self.user_data)
         # Query endpoint
         request = self.requests.put(self.endpoint, data={})
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert forbidden access
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class NoDestroy(BaseDrfTest):
@@ -138,18 +146,19 @@ class NoDestroy(BaseDrfTest):
 class NoDestroyOwned(BaseDrfTest):
     def test_auth_user_cannot_delete_owned_instance(self):
         """Authenticated user cannot delete owned instance"""
-        # get user
-        user = self.get_active_user(self.user_data)
+        other_user = self.user_factory()
         # Create instances
         instance = self.factory()
-        setattr(instance, self.USER_FIELD_NAME, user)
+        setattr(instance, self.USER_FIELD_NAME, other_user)
         instance.save()
         # Query endpoint
         request = self.requests.delete(self.endpoint)
+        # get user
+        user = self.get_active_user(self.user_data)
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # Assert access forbidden
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # Assert instance still exists on db
         self.assertTrue(self.model.objects.filter(id=instance.pk).exists())
 
@@ -379,7 +388,15 @@ class AuthReadOnly(CanList, CanRetrieve, NoCreate, NoUpdate, NoDestroy):
 
 class AuthOwner(CanListOwned, CanRetrieveOwned, CanCreateOwned, CanUpdateOwned, CanDestroyOwned):
     """
-    Authenticated user can access intances owned by user
+    Authenticated user can access intances owned by itself
+    """
+
+    pass
+
+
+class OtherOwner(NoListOwned, NoRetrieveOwned, NoUpdateOwned, NoDestroyOwned):
+    """
+    Authenticated user cannot access any instances owned by other user
     """
 
     pass

@@ -2,6 +2,7 @@
 
 root = true
 
+# Set generic rules, then refine
 [*]
 indent_style = space
 indent_size = 4
@@ -10,12 +11,20 @@ trim_trailing_whitespace = true
 end_of_line = lf
 charset = utf-8
 
-# Docstrings and comments use max_line_length = 79
+# Python files
 [*.py]
-# max_line_length = 119
+max_line_length = 200
 
-# Use 2 spaces for the HTML files
+# HTML files
 [*.html]
+indent_size = 2
+
+# CSS files
+[*.css]
+indent_size = 2
+
+# MarkDown files
+[*.md]
 indent_size = 2
 
 # The JSON files contain newlines inconsistently

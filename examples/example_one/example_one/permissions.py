@@ -22,7 +22,6 @@ class CreatorPermission(BasePermission):
             return False
 
     def has_permission(self, request, view):
-
         if request.user.is_staff and request.method in SAFE_METHODS:
             # safe access to staff
             return True

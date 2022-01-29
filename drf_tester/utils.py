@@ -5,8 +5,8 @@ Collection of functions to be used by other tests in module
 import random
 
 from django.contrib.auth import get_user_model
-from rest_framework.test import APIRequestFactory
 
+from rest_framework.test import APIRequestFactory
 
 User = get_user_model()
 

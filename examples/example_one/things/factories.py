@@ -1,5 +1,6 @@
-import datetime
+from django.contrib.auth import get_user_model
 
+from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyDecimal, FuzzyInteger, FuzzyText
 from faker import Faker
@@ -7,6 +8,13 @@ from faker import Faker
 from .models import Property, Thing
 
 fake = Faker()
+
+
+class UserFactory(DjangoModelFactory):
+    username = FuzzyText(prefix="USER_", length=10)
+
+    class Meta:
+        model = get_user_model()
 
 
 class ThingFactory(DjangoModelFactory):
@@ -22,7 +30,7 @@ class ThingFactory(DjangoModelFactory):
 
 class PropertyFactory(DjangoModelFactory):
     name = FuzzyText(prefix="NAME_", length=10)
-    creator = None
+    creator = SubFactory(UserFactory)
 
     class Meta:
         model = Property
