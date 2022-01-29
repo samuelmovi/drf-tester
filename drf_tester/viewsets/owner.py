@@ -43,6 +43,7 @@ class NoRetrieveOwned(BaseDrfTest):
         force_authenticate(request, user=user)
         response = self.view(request, pk=instance.id)
         # TODO: this call doesn't trigger get_object in view ?!?!?
+        self.assertEqual(response.data, [])
         # Assert forbidden access
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

@@ -65,7 +65,6 @@ class PropertyViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_object(self):
-        # import ipdb; ipdb.set_trace()
         obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
         self.check_object_permissions(self.request, obj)
         return obj
